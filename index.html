@@ -42,42 +42,46 @@
 <strong>How accurate?</strong> We can reproduce the two- and three-point clustering of dark matter to within 5% on all scales used for current BAO and RSD measurements.</li>
 </ul>
 
-<p>The code itself is written in C and uses MPI for the parallelisation, and includes loads of features that should be useful for current and next-gen large scale structure surveys. One we're really proud of (so much so that we put it in the name) is the ability to generate lightcone simulations <em>during</em> runtime, without using any extra memory and with minimal cost to computational time. This means that L-PICOLA simulations can have clustering that changes as a function of the distance of the observer. This is much more realistic than the simple snaphots used for current surveys.</p>
+<p>The code also includes several features that should be useful for current and next-gen large scale structure surveys. One we're really proud of (so much so that we put it in the name) is the ability to generate lightcone simulations <em>during</em> runtime, <strong>without using any extra memory and with minimal cost to computational time</strong>. This means that L-PICOLA simulations can have clustering that changes as a function of the distance of the observer. This is much more realistic than the simple snaphots used for current surveys.</p>
 
-<p>On top of this we can replicate the box at runtime to cover the full redshift range, whilst still keeping a good simulation resolution and include primordial non_Gaussianity in the initial conditions. Full details of the code and it's capabilities can be found in Howlett et. al. (in prep.)</p>
+<p>On top of this we can replicate the box at runtime to cover the full redshift range, whilst still keeping a good simulation resolution and include primordial non_Gaussianity in the initial conditions. <strong>Full details of the code and it's capabilities can be found in Howlett et. al. (in prep.).</strong></p>
 
 <p>The code has already been used to generate mock galaxy catalogues for the SDSS-II Main Galaxy Sample. You can find out more about this in the papers <a href="http://arxiv.org/abs/1409.3242">Ross et. al., 2015</a> and <a href="http://arxiv.org/abs/1409.3238">Howlett et. al., 2015</a>. We are also using it to generate a set of highly detailed lightcone mocks for the Dark Energy Survey. We hope it finds many more uses.</p>
 
-<p>You can download the source code using the links up the top. Furthermore, the code is still under active development if you feel like getting your hands dirty, just fork the code using the GitHub link.</p>
+<p>You can download the source code using the links up the top. Furthermore, the code is still under active development so if you feel like getting your hands dirty, just fork the code using the GitHub link.</p>
 
-<h1>
-<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Usage</h1>
+<h2>
+<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Usage</h2>
 
 <p>We have included a detailed User Guide with the source code. You should find all the information on the different options within, and inputs required, by the code.  As a basic example, you'll first need the <a href="http://www.open-mpi.org/">MPI</a>, <a href="http://www.fftw.org/">FFTW-3</a> and <a href="http://www.gnu.org/software/gsl/">GSL</a> libraries installed.</p>
 
 <p>Then you'll need to specify the filepaths for these is the Makefile included with the code. If you've done this correctly, typing <code>Make</code> from the directory containing the Makefile and source files should compile the code. </p>
 
-<p>To run the code, you can then type:
-<code>mpirun -np 8 L-PICOLA file/run_parameters.dat</code> 
-This will run the example included with the distribution on 8 processors. </p>
+<p>To run the code, you can then type:</p>
+
+<p><code>mpirun -np 8 L-PICOLA file/run_parameters.dat</code> </p>
+
+<p>This will run the example included with the distribution on 8 processors. </p>
 
 <h1>
 <a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h1>
 
-<p>Cullan Howlett (ICG, Portsmouth)
-Marc Manera (UCL, London)
-Will Percival (ICG, Portsmouth)</p>
+<p>Cullan Howlett (ICG, Portsmouth)</p>
 
-<h1>
-<a id="version" class="anchor" href="#version" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version</h1>
+<p>Marc Manera (UCL, London)</p>
+
+<p>Will Percival (ICG, Portsmouth)</p>
 
 <h2>
-<a id="100-04-mar-2015" class="anchor" href="#100-04-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.0.0 (04-Mar-2015)</h2>
+<a id="version" class="anchor" href="#version" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version</h2>
+
+<h3>
+<a id="100-04-mar-2015" class="anchor" href="#100-04-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.0.0 (04-Mar-2015)</h3>
 
 <p>Initial Release</p>
 
-<h1>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h1>
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>The code is distributed under the GNU General Public License v2.0. You should get a copy of this when you download the code. This means that you can (and should :) ) modify and distribute the code in any manner you see fit. This also means, however that we, the original creators, provide no warranty or guarantee with the code. All we ask is that you let us know of any problems you have with the code, so we can try to come up with a fix, and that if you use the code for your research, would you please cite the code paper referenced above (Howlett et. al., (in prep.))</p>
         </section>
