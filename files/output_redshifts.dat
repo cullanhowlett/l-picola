@@ -1,0 +1,21 @@
+% Here we place a list of comma-delimited output redshifts and the number of steps to take between
+% that redshift and the previous output redshift (or the initial redshift specified in the run
+% parameters file if a given output redshift is the first one to be output)
+%
+% We can't put an output redshift greater than the initial redshift, but we can ask for output
+% at the initial redshift, i.e. 2LPT initial conditions only, by putting one of the output redshifts
+% as the initial redshift. In fact, as comparing floating point numbers is hard, for any output redshift
+% within 0.0001 percent of the initial redshift we will assume you meant to put the initial redshift 
+% or that rounding errors have occured and output at the initial redshift anyway.
+% 
+% A final point is that all the number of steps must be greater than 0 except for if the 
+% corresponding redshift satisfies the condition above and is equivalent to the initial redshift.
+% In this case it doesn't matter what value you put.
+%
+% Example: output a simulation at the initial redshift of 9.0 and then take 6 steps to redshift 1.0, output,
+% and take 4 steps to redshift 0.0 then output:
+%   9.0, 0
+%   1.0, 6
+%   0.0, 4  
+
+0.0, 10

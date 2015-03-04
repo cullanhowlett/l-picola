@@ -1,0 +1,41 @@
+    L-PICOLA v1.0.0, January 2015
+    Authors: Cullan Howlett & Marc Manera (ICG, Portsmouth; UCL, London)
+
+    This code is L-PICOLA: A Lightcone-enabled Parallel Implementation 
+    of the COLA (COmoving Lagrangian Acceleration) method, as described in 
+    Howlett. C., Manera. M. & Percival. W. J. (2015). Please read this paper
+    for full details of how the code works and the efforts that have been made
+    to produce this code. We ask that any work making use of L-PICOLA 
+    reference this paper.
+
+    We have included a comprehensive user guide with this distribution, 
+    explaining the multitude of options available when using the code. We 
+    have provided explanation of each of the various compilation options 
+    and run parameters therein, however as a basic start please look at the 
+    information on the webpage associated with L-PICOLA.
+    
+    You can find the User Guide and code paper in the directory 'Documentation'.
+    The source code is in the 'src' directory. Any files you may need to run 
+    L-PICOLA, such as the 'run_parameters.dat' file, are in the 'files' directory.
+    Finally, we have put a few short codes you may find useful in preparing,
+    and using the output from, L-PICOLA, in the 'utilities' directory.
+    
+    In L-PICOLA, The COLA method is applied to a PM-based N-body code as in the 
+    public release of COLAcode (Dec 2012), albeit with many changes and 
+    improvements. In this sense, L-PICOLA can be seen as an  amalgamation of 
+    both COLAcode and 2LPTic where a substantial amount of  work has been 
+    put in to both to make them compatible and simultaneously improve both. 
+    Obviously this means that this work relies fundamentally on the work others 
+    have put into creating the aforementioned codes, and so we kindly suggest 
+    that any work using this code also reference the following papers on top 
+    of the main code paper above:
+
+      Solving Large Scale Structure in Ten Easy Steps with COLA,
+      Tassev, S., Zaldarriaga, M. & Eisenstein, D. 2013,
+      JCAP, 6, 036, (arXiv:1301.0322).
+
+      Large-scale Bias and Efficient Generation of Initial Conditions for 
+      Nonlocal Primordial non-Gaussianity
+      Scoccimarro, R., Hui, L., Manera, M. & Chan, K. C., 2012, 
+      Phys. Rev. D, 85, 083002, (arXiv:1108.5512).
+

@@ -1,0 +1,88 @@
+% =============================== %
+% This is the run parameters file % 
+% =============================== %
+
+% Simulation outputs
+% ==================
+OutputDir                   files/                               % Directory for output.
+FileBase                    example_filename                     % Base-filename of output files (appropriate additions are appended on at runtime) 
+OutputRedshiftFile          files/output_redshifts.dat           % The file containing the redshifts that we want snapshots for
+NumFilesWrittenInParallel   4                                    % limits the number of files that are written in parallel when outputting.
+
+% Simulation Specifications
+% =========================
+UseCOLA          1           % Whether or not to use the COLA method (1=true, 0=false).
+Buffer           1.3         % The amount of extra memory to reserve for particles moving between tasks during runtime.
+Nmesh            256         % This is the size of the FFT grid used to compute the displacement field and gravitational forces.
+Nsample          256         % This sets the total number of particles in the simulation, such that Ntot = Nsample^3.
+Box              512.0      % The Periodic box size of simulation.
+Init_Redshift    9.0         % The redshift to begin timestepping from (redshift = 9 works well for COLA)
+Seed             5001        % Seed for IC-generator
+SphereMode       0           % If "1" only modes with |k| < k_Nyquist are used to generate initial conditions (i.e. a sphere in k-space), 
+                             % otherwise modes with |k_x|,|k_y|,|k_z| < k_Nyquist are used (i.e. a cube in k-space).
+
+WhichSpectrum    1           % "0" - Use transfer function, not power spectrum
+                             % "1" - Use a tabulated power spectrum in the file 'FileWithInputSpectrum'
+                             % otherwise, Eisenstein and Hu (1998) parametrization is used
+                             % Non-Gaussian case requires "0" and that we use the transfer function
+
+WhichTransfer    0           % "0" - Use power spectrum, not transfer function
+                             % "1" - Use a tabulated transfer function in the file 'FileWithInputTransfer' 
+                             % otherwise, Eisenstein and Hu (1998) parameterization used 
+                             % For Non-Gaussian models this is required (rather than the power spectrum) 
+
+FileWithInputSpectrum  files/input_spectrum.dat    % filename of tabulated input spectrum (if used)
+                                                   % expecting k and Pk 
+
+FileWithInputTransfer  files/input_transfer.dat    % filename of tabulated transfer function (if used)
+                                                   % expecting k and T (unnormalized)
+
+% Cosmological Parameters
+% =======================
+Omega            0.25        % Total matter density (CDM + Baryons at z=0).
+OmegaBaryon      0.04        % Baryon density (at z=0).
+OmegaLambda      0.75        % Dark Energy density (at z=0)
+HubbleParam      0.7         % Hubble parameter, 'little h' (only used for power spectrum parameterization).
+Sigma8           0.83        % Power spectrum normalization (power spectrum may already be normalized correctly).
+PrimordialIndex  0.96        % Used to tilt the power spectrum for non-tabulated power spectra (if != 1.0 and nongaussian, generic flag required)
+
+% Timestepping Options
+% ====================
+StepDist         0           % The timestep spacing (0 for linear in a, 1 for logarithmic in a)
+DeltaA           0           % The type of timestepping: "0" - Use modified COLA timestepping for Kick and Drift. Please choose a value for nLPT.
+                             % The type of timestepping: "1" - Use modified COLA timestepping for Kick and standard Quinn timestepping for Drift. Please choose a value for nLPT.
+                             % The type of timestepping: "2" - Use standard Quinn timestepping for Kick and Drift
+                             % The type of timestepping: "3" - Use non-integral timestepping for Kick and Drift
+nLPT             -2.5        % The value of nLPT to use for modified COLA timestepping
+
+
+% Units
+% =====                                                                                             
+UnitLength_in_cm                3.085678e24       % defines length unit of output (in cm/h) 
+UnitMass_in_g                   1.989e43          % defines mass unit of output (in g/h)
+UnitVelocity_in_cm_per_s        1e5               % defines velocity unit of output (in cm/sec)
+InputSpectrum_UnitLength_in_cm  3.085678e24       % defines length unit of tabulated input spectrum in cm/h. 
+                                                  % Note: This can be chosen different from UnitLength_in_cm
+
+% ================================================== %
+% Optional extras (must comment out if not required) %
+% ================================================== %
+
+% Non-Gaussianity
+% ===============
+%Fnl                  -400                              % The value of Fnl.
+%Fnl_Redshift         49.0                              % The redshift to apply the nongaussian potential
+%FileWithInputKernel  /files/input_kernel_ortog.txt     % the input kernel for generic non-gaussianity (only needed for GENERIC_FNL)
+
+
+% Lightcone simulations
+% =====================
+%Origin_x     0.0                % The position of the lightcone origin in the x-axis
+%Origin_y     0.0                % The position of the lightcone origin in the y-axis
+%Origin_z     0.0                % The position of the lightcone origin in the z-axis
+%Nrep_neg_x   0                  % The maximum number of box replicates in the negative x-direction
+%Nrep_pos_x   0                  % The maximum number of box replicates in the positive x-direction
+%Nrep_neg_y   0                  % The maximum number of box replicates in the negative y-direction
+%Nrep_pos_y   0                  % The maximum number of box replicates in the positive y-direction
+%Nrep_neg_z   0                  % The maximum number of box replicates in the negative z-direction
+%Nrep_pos_z   0                  % The maximum number of box replicates in the positive z-direction
