@@ -96,4 +96,4 @@ program prepare_snapshot
     close(10)
   end do
 
-end program prepare_gadget
+end program prepare_snapshot
