@@ -16,7 +16,7 @@
     
     You can find the User Guide and code paper in the directory 'Documentation'.
     The source code is in the 'src' directory. Any files you may need to run 
-    L-PICOLA, such as the 'run_parameters.dat' file, are in the 'files' directory.
+    L-PICOLA, such as 'run_parameters.dat' file, are in the 'files' directory.
     Finally, we have put a few short codes you may find useful in preparing,
     and using the output from, L-PICOLA, in the 'utilities' directory.
     
