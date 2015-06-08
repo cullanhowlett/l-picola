@@ -22,6 +22,8 @@
 
 /* ======================================================*/
 /* This file contains all the cosmology related routines.*/
+/* v1.1: New routines for calculating the second-order   */
+/*       growth factor and associated derivatives        */
 /* ======================================================*/
 
 #include "vars.h"
@@ -30,15 +32,13 @@
 // The Hubble expansion
 // ====================
 double Hubblea(double a) { 
-  return sqrt(Omega/(a*a*a)+(1.0-Omega));
-  //return sqrt(Omega/(a*a*a)+OmegaLambda+(1.0-Omega-OmegaLambda)/(a*a));
+  return sqrt(Omega/(a*a*a)+OmegaLambda+(1.0-Omega-OmegaLambda)/(a*a));
 }
 
 // The Q factor from Tassev et. al., 2013 (Q = a^3 H(a)/H0)
 // ========================================================
 double Qfactor(double a) { 
   return Hubblea(a)*a*a*a;
-  //return sqrt(Omega/(a*a*a)+OmegaLambda+(1.0-Omega-OmegaLambda)/(a*a))*a*a*a;
 }
 
 // Normalised growth factor for LCDM
@@ -79,29 +79,89 @@ double growthD2(double a) {
   return growthD2temp(a)/growthD2temp(1.0);
 }
 
-// Second order growth factor
-// ==========================
+// Second order growth factor (we use Matsubara 1995 as this works for non-flat cosmology)
+// =======================================================================================
 double growthD2temp(double a) {
-  double D = growthD(a);
-  double Ha = Hubblea(a);
-  double Oma = Omega/(a*a*a*Ha*Ha);
-  return D*D*pow(Oma,-1.0/143.0);
+  double D1 = growthD(a);
+  double Om = Omega/(Omega+OmegaLambda*a*a*a+(1.0-Omega-OmegaLambda)*a);
+  double Ol = OmegaLambda/(Omega/(a*a*a)+OmegaLambda+(1.0-Omega-OmegaLambda)/(a*a));
+  double u32fac = u32(a);
+  double u52fac = u52(a);
+  return (7.0/3.0)*D1*D1*(Om/4.0-Ol/2.0-((1.0-((3.0*u52fac)/(2.0*u32fac)))/u32fac));
+}
+
+// The function U_{3/2} in Matsubara 1995
+// ======================================
+double u32(double a) {
+
+  double alpha = 0.0;
+  double result, error;
+
+  gsl_function F;
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (5000);
+     
+  F.function = &u32func;
+  F.params = &alpha;
+     
+  gsl_integration_qag(&F,0.0,a,0,1e-5,5000,6,w,&result,&error); 
+      
+  gsl_integration_workspace_free (w);
+     
+  double ea = Hubblea(a);
+
+  return a*a*ea*ea*ea*result;
+}
+
+// The integrand for the function U_{3/2} in Matsubara 1995
+// ========================================================
+double u32func(double a, void * params) {       
+  return 1.0/(pow(a*Hubblea(a),3.0));
+}
+
+// The function U_{5/2} in Matsubara 1995
+// ======================================
+double u52(double a) {
+
+  double alpha = 0.0;
+  double result, error;
+
+  gsl_function F;
+  gsl_integration_workspace * w = gsl_integration_workspace_alloc (5000);
+     
+  F.function = &u52func;
+  F.params = &alpha;
+     
+  gsl_integration_qag(&F,0.0,a,0,1e-5,5000,6,w,&result,&error); 
+      
+  gsl_integration_workspace_free (w);
+     
+  double ea = Hubblea(a);
+
+  return a*a*a*a*ea*ea*ea*ea*ea*result;
+}
+
+// The integrand for the function U_{5/2} in Matsubara 1995
+// ========================================================
+double u52func(double a, void * params) {       
+  return 1.0/(pow(a*Hubblea(a),5.0));
 }
 
 // returns Q*d(D_{1})/da, where Q=Qfactor(a) 
 // =========================================
 double QdD1da(double a) {
-  return (1.0/Hubblea(a))*((1.0/growthDtemp(1.0))-(((3.0*Omega)/(2.0*a))*growthD(a)));
-  //return (1.0/Hubblea(a))*((1.0/growthDtemp(1.0))-((((3.0*Omega)/(2.0*a))+(1.0-Omega-OmegaLambda))*growthD(a)));
+  return (1.0/Hubblea(a))*((1.0/growthDtemp(1.0))-((((3.0*Omega)/(2.0*a))+(1.0-Omega-OmegaLambda))*growthD(a)));
 }
 
 // returns Q*d(D_{2})/da, where Q=Qfactor(a) 
 // =========================================
 double QdD2da(double a) {
-  double D1 = growthD(a); 
-  double D2 = growthD2(a);
-  double Dv = QdD1da(a);
-  return (2.0*D2*Dv/D1)+((3.0*D2*(1.0-Omega)*a*a)/(143.0*Hubblea(a)));
+  double D1 = growthD(a);
+  double Om = Omega/(Omega+OmegaLambda*a*a*a+(1.0-Omega-OmegaLambda)*a);
+  double Ol = OmegaLambda/(Omega/(a*a*a)+OmegaLambda+(1.0-Omega-OmegaLambda)/(a*a));
+  double u32fac = u32(a);
+  double u52fac = u52(a);
+  double factor = -3.0*Om+((2.0+4.0*u32fac-3.0*(2.0+Om-2.0*Ol)*u52fac)/(u32fac*u32fac));
+  return (7.0/12.0)*D1*D1*a*a*Hubblea(a)*factor;
 }
 
 // Functions for COLA modified time-stepping (used when DeltaA=0,1)

@@ -22,6 +22,8 @@
 
 /* ========================================================*/
 /* This file contains the main driver routine for L-PICOLA.*/
+/* v1.1: New routines for calculating the second-order     */
+/*       growth factor and associated derivatives          */
 /* ========================================================*/
      
 #include "vars.h"
@@ -641,6 +643,7 @@ void Kick(double AI, double AF, double A, double Di, double Di2) {
     
   q1=1.5*Omega*Di*A;                                // Q*d/da(Q*dD_{1}/da)
   q2=1.5*Omega*Di2*(1.0+(7.0*Di*Di)/(3.0*Di2))*A;   // Q*d/da(Q*dD_{2}/da) (we have to sort out the stray factors of -3/7 as one of these is absorbed into D2 itself)
+  
     
   for(n=0; n<NumPart; n++) {
 

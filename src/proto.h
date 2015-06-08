@@ -34,23 +34,27 @@ void Output_Timing(void);
 #endif
 
 // cosmo.c
-double TimeCOLA(double a);
-double QdTimeCOLAda(double a);
+double u32(double a);
+double u52(double a);
 double QdD1da(double a);
 double QdD2da(double a);
 double Hubblea(double a);
 double Qfactor(double a);
 double growthD(double a);
 double growthD2(double a);
+double TimeCOLA(double a);
 double growthDtemp(double a);
 double growthD2temp(double a);
-double DriftCOLA(double ai,double af,double ac);
+double QdTimeCOLAda(double a);
+double KickStd(double ai,double af);
+double DriftStd(double ai,double af);
+double u32func(double a, void * params);
+double u52func(double a, void * params);
+double KickStdfunc(double a, void * params);
+double DriftStdfunc(double a, void * params);
 double DriftCOLAfunc(double a, void * params);
 double KickCOLA(double ai,double af,double ac);
-double DriftStd(double ai,double af);
-double DriftStdfunc(double a, void * params);
-double KickStd(double ai,double af);
-double KickStdfunc(double a, void * params);
+double DriftCOLA(double ai,double af,double ac);
 double growthDtempfunc(double a, void * params);
 
 // auxPM.c
