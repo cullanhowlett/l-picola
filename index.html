@@ -1,36 +1,41 @@
-<!DOCTYPE html>
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <title>L-PICOLA by CullanHowlett</title>
-  </head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <body>
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
+  <link rel="stylesheet" href="stylesheets/github-dark.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>L-PICOLA</title>
+  <meta name="description" content="Sweet simulations with added caffeine">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">L-PICOLA</h1>
+    </header>
     <div id="container">
-      <div class="inner">
-
-        <header>
-          <h1>L-PICOLA</h1>
-          <h2>Sweet simulations with added caffeine</h2>
-        </header>
-
-        <section id="downloads" class="clearfix">
-          <a href="https://github.com/CullanHowlett/l-picola/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/CullanHowlett/l-picola/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/CullanHowlett/l-picola" id="view-on-github" class="button"><span>View on GitHub</span></a>
-        </section>
-
-        <hr>
-
-        <section id="main_content">
+      <p class="tagline">Sweet simulations with added caffeine</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/CullanHowlett/l-picola/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/CullanHowlett/l-picola/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/CullanHowlett/l-picola" class="code">View L-PICOLA on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
           <p>L-PICOLA is a distributed-memory, <strong>parallel</strong> code for creating <strong>fast</strong>, <strong>accurate</strong>, dark matter simulations. </p>
 
 <ul>
@@ -42,9 +47,9 @@
 <strong>How accurate?</strong> We can reproduce the two- and three-point clustering of dark matter to within 5% on all scales used for current BAO and RSD measurements.</li>
 </ul>
 
-<p>On top of this we can include primordial non-Gaussianity in the initial conditions and generate lightcone simulations <em>during</em> runtime, <strong>without using any extra memory and with minimal cost to computational time</strong> (We're so proud of this feature we even put it in the name). We can also replicate the box at runtime to cover the full redshift range, whilst still keeping a good simulation resolution. <strong>Full details of the code and it's capabilities can be found in Howlett et. al. (in prep.).</strong></p>
+<p>On top of this we can include primordial non-Gaussianity in the initial conditions and generate lightcone simulations <em>during</em> runtime, <strong>without using any extra memory and with minimal cost to computational time</strong> (We're so proud of this feature we even put it in the name). We can also replicate the box at runtime to cover the full redshift range, whilst still keeping a good simulation resolution. <strong>Full details of the code and it's capabilities can be found in  <a href="http://arxiv.org/abs/1506.03737">Howlett et. al., 2015b</a>.</strong></p>
 
-<p>The code has already been used to generate mock galaxy catalogues for the SDSS-II Main Galaxy Sample. You can find out more about this in the papers <a href="http://arxiv.org/abs/1409.3242">Ross et. al., 2015</a> and <a href="http://arxiv.org/abs/1409.3238">Howlett et. al., 2015</a>. We are also using it to generate a set of highly detailed lightcone mocks for the Dark Energy Survey. We hope it finds many more uses.</p>
+<p>The code has already been used to generate mock galaxy catalogues for the SDSS-II Main Galaxy Sample. You can find out more about this in the papers <a href="http://arxiv.org/abs/1409.3242">Ross et. al., 2015</a> and <a href="http://arxiv.org/abs/1409.3238">Howlett et. al., 2015a</a>. We are also using it to generate a set of highly detailed lightcone mocks for the Dark Energy Survey. We hope it finds many more uses.</p>
 
 <p>You can download the source code using the links up the top. Furthermore, the code is still under active development so if you feel like getting your hands dirty, just fork the code using the GitHub link.</p>
 
@@ -86,16 +91,27 @@
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>The code is distributed under the GNU General Public License v2.0. You should get a copy of this when you download the code. This means that you can (and should :) ) modify and distribute the code in any manner you see fit. This also means, however, provide no warranty or guarantee with the code. All we ask is that you let us know of any problems you have with the code, so we can try to come up with a fix, and that if you use the code for your research, would you please cite the code paper referenced above (Howlett et. al., (in prep.))</p>
-        </section>
-
-        <footer>
-          L-PICOLA is maintained by <a href="https://github.com/CullanHowlett">CullanHowlett</a><br>
-          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
-        </footer>
-
-        
+<p>The code is distributed under the GNU General Public License v2.0. You should get a copy of this when you download the code. This means that you can (and should :) ) modify and distribute the code in any manner you see fit. This also means, however, we provide no warranty or guarantee with the code. All we ask is that you let us know of any problems you have with the code, so we can try to come up with a fix, and that if you use the code for your research, would you please cite the code paper referenced above (<a href="http://arxiv.org/abs/1506.03737">Howlett et. al., 2015b</a>)</p>
+        </article>
       </div>
     </div>
-  </body>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/CullanHowlett" class="avatar"><img src="https://avatars3.githubusercontent.com/u/5528370?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/CullanHowlett">CullanHowlett</a> maintains <a href="https://github.com/CullanHowlett/l-picola">L-PICOLA</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/CullanHowlett/l-picola/tarball/master" class="tar">tar</a><a href="https://github.com/CullanHowlett/l-picola/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
 </html>
