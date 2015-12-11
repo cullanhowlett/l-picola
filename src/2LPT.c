@@ -1,6 +1,6 @@
 /* ==========================================================================*/
-/*   Copyright (c) 2015       Cullan Howlett & Marc Manera,                  */
-/*                            Institute of Cosmology and Gravitation         */
+/*   Version 1.2.             Cullan Howlett & Marc Manera,                  */
+/*   Copyright (c) 2015       Institute of Cosmology and Gravitation         */
 /*                            (University of Portsmouth) & University        */
 /*                            College London.                                */
 /*                                                                           */
@@ -22,6 +22,7 @@
 
 /* ======================================================================================*/
 /* This file contains most of the routines for calculating the ZA and 2LPT displacements.*/
+/* v1.2: Edited print statements to output in displacements in correct units             */
 /* ======================================================================================*/
 
 #include "vars.h"
@@ -1404,7 +1405,7 @@ void displacement_fields(void) {
 
   if (ThisTask == 0) {
     printf("Calculated Zeldovich and 2LPT displacements...\n");
-    printf("Maximum displacement = %lf kpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob, max_disp_glob / (Box / Nmesh));
+    printf("Maximum displacement = %lf kpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob / (Box / Nmesh));
     fflush(stdout);
   }
 

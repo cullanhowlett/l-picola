@@ -1,6 +1,6 @@
 /* ==========================================================================*/
-/*   Copyright (c) 2015       Cullan Howlett & Marc Manera,                  */
-/*                            Institute of Cosmology and Gravitation         */
+/*   Version 1.2.             Cullan Howlett & Marc Manera,                  */
+/*   Copyright (c) 2015       Institute of Cosmology and Gravitation         */
 /*                            (University of Portsmouth) & University        */
 /*                            College London.                                */
 /*                                                                           */
@@ -24,6 +24,11 @@
 /* This file contains the main driver routine for L-PICOLA.*/
 /* v1.1: New routines for calculating the second-order     */
 /*       growth factor and associated derivatives          */
+/* v1.2: Particle positions and velocities are now output  */
+/*       in user-defined units as opposed to always being  */
+/*       in Mpc/h. Fixed a small bug in the naming         */
+/*       output files that named z=9 snapshots as z8p100   */
+/*       due to floating-point problems with the value 0.1 */
 /* ========================================================*/
      
 #include "vars.h"
@@ -240,7 +245,7 @@ int main(int argc, char **argv) {
     startcpu2 = (double)clock();
     startwall2 = MPI_Wtime();
 #endif
-    Output(A,Dv,Dv2);
+    Output(A,Init_Redshift,Dv,Dv2);
 #ifdef TIMING
     endcpu2 = (double)clock();
     endwall2 = MPI_Wtime();
@@ -308,7 +313,7 @@ int main(int argc, char **argv) {
 #ifdef TIMING
   endcpu = (double)clock();
   endwall = MPI_Wtime();
-  CpuTime_2LPT = (endcpu -startcpu)/(double)CLOCKS_PER_SEC;
+  CpuTime_2LPT = (endcpu-startcpu)/(double)CLOCKS_PER_SEC;
   WallTime_2LPT = endwall-startwall;
   int nstepstot = 0;
 #ifdef LIGHTCONE
@@ -453,7 +458,7 @@ int main(int argc, char **argv) {
         startcpu = (double)clock();
         startwall = MPI_Wtime();
 #endif
-        Output(A,Dv,Dv2);
+        Output(A,OutputList[i-1].Redshift,Dv,Dv2);
 #ifdef TIMING
         endcpu = (double)clock();
         endwall = MPI_Wtime();
@@ -708,16 +713,15 @@ void Drift(double A, double AFF, double AF, double Di, double Di2) {
 
 // Output the data
 // ===============
-void Output(double A, double Dv, double Dv2) {
+void Output(double A, double Z, double Dv, double Dv2) {
 
   FILE * fp; 
   char buf[300];
   int nprocgroup, groupTask, masterTask;
   unsigned int n;
-  double Z = (1.0/A)-1.0;
   double fac = Hubble/pow(A,1.5);
-  double lengthfac = UnitLength_in_cm/3.085678e24;     // Convert positions to Mpc/h
-  double velfac    = UnitVelocity_in_cm_per_s/1.0e5;   // Convert velocities to km/s
+  double lengthfac = 1.0;   // Keep positions in user-specified units (Originally converted positions to Mpc/h)
+  double velfac    = 1.0;   // Keep velocities in user-epcified units (Originally converted velocities to km/s)
 
 #ifdef GADGET_STYLE
   size_t bytes;
@@ -840,10 +844,10 @@ void Output(double A, double Dv, double Dv2) {
           P_Vel[1] = fac*(P[n].Vel[1]-sumy+(P[n].Dz[1]*Dv+P[n].D2[1]*Dv2)*UseCOLA);
           P_Vel[2] = fac*(P[n].Vel[2]-sumz+(P[n].Dz[2]*Dv+P[n].D2[2]*Dv2)*UseCOLA);
 #ifdef PARTICLE_ID
-          fprintf(fp,"%12llu %12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",
+          fprintf(fp,"%12llu %15.6f %15.6f %15.6f %15.6f %15.6f %15.6f\n",
                       P[n].ID, (float)(lengthfac*P[n].Pos[0]),(float)(lengthfac*P[n].Pos[1]),(float)(lengthfac*P[n].Pos[2]),(float)(velfac*P_Vel[0]),(float)(velfac*P_Vel[1]),(float)(velfac*P_Vel[2]));
 #else
-          fprintf(fp,"%12.6f %12.6f %12.6f %12.6f %12.6f %12.6f\n",
+          fprintf(fp,"%15.6f %15.6f %15.6f %15.6f %15.6f %15.6f\n",
                       (float)(lengthfac*P[n].Pos[0]),(float)(lengthfac*P[n].Pos[1]),(float)(lengthfac*P[n].Pos[2]),(float)(velfac*P_Vel[0]),(float)(velfac*P_Vel[1]),(float)(velfac*P_Vel[2]));
 #endif
         }
@@ -854,7 +858,7 @@ void Output(double A, double Dv, double Dv2) {
     MPI_Barrier(MPI_COMM_WORLD);
   }
  
-  Output_Info(A);
+  Output_Info(A, Z);
 
   return;
 }
@@ -862,12 +866,11 @@ void Output(double A, double Dv, double Dv2) {
 
 // Generate the info file which contains a list of all the output files, the 8 corners of the slices on those files and the number of particles in the slice
 // =========================================================================================================================================================
-void Output_Info(double A) {
+void Output_Info(double A, double Z) {
 
   FILE * fp; 
   char buf[300];
   int i;
-  double Z = (1.0/A)-1.0;
 
   int * Local_p_start_table = (int *)malloc(sizeof(int) * NTask);
   unsigned int * Noutput_table = (unsigned int *)malloc(sizeof(unsigned int) * NTask);
@@ -889,7 +892,7 @@ void Output_Info(double A) {
     for (i=0; i<NTask; i++) {
       double x0 = Local_p_start_table[i]*(Box/(double)Nsample); 
       double x1 = (Local_p_start_table[i]+Local_np_table[i])*(Box/(double)Nsample);
-      fprintf(fp, "%12d %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf %12.6lf %12u\n", i, x0, y0, z0, x1, y1, z1, Noutput_table[i]);
+      fprintf(fp, "%12d %15.6lf %15.6lf %15.6lf %15.6lf %15.6lf %15.6lf %12u\n", i, x0, y0, z0, x1, y1, z1, Noutput_table[i]);
     }
     fclose(fp);
   }

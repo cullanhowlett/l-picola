@@ -1,6 +1,6 @@
 /* ==========================================================================*/
-/*   Copyright (c) 2015       Cullan Howlett & Marc Manera,                  */
-/*                            Institute of Cosmology and Gravitation         */
+/*   Version 1.2.             Cullan Howlett & Marc Manera,                  */
+/*   Copyright (c) 2015       Institute of Cosmology and Gravitation         */
 /*                            (University of Portsmouth) & University        */
 /*                            College London.                                */
 /*                                                                           */
@@ -22,6 +22,13 @@
 
 /* =============================================================================================*/
 /* This file contains the routines for setting up the initial power spectrum of the simulation. */
+/* v1.2: Changed normalisation procedure so that it is more independent of user-defined units   */
+/*       Previously using different units i.e. kpc/h instead of Mpc/h resulted in differences   */
+/*       in the output of the code due to slight differences in the normalisation resulting     */
+/*       from integration errors (i.e. calculating Sigma8 and truncating integral at 500.0/R)   */
+/*       Now the calculation of the power spectrum and normalisation is independent of units,   */
+/*       except for a single factor which corrects for the units, AFTER the correction for the  */
+/*       input Sigma8                                                                           */ 
 /* =============================================================================================*/
 
 #include "vars.h"
@@ -216,17 +223,19 @@ void initialize_powerspectrum(void) {
   double res;
 
   // R8 = 8 MPc/h
-  R8 = 8 * (3.085678e24 / UnitLength_in_cm);
+  R8 = 8.0;
 
   // Read power spectrum from input file if requested
   if(WhichSpectrum == 1) read_power_table();
 
   Norm = 1.0;
   res = TopHatSigma2(R8);
-  if(ThisTask == 0 && WhichSpectrum == 1) printf("Normalization of spectrum in file: Sigma8 = %lf...\n",sqrt(res));
+  if(ThisTask == 0) printf("Normalization of spectrum from file: Sigma8 = %lf...\n",sqrt(res));
 
   Norm = Sigma8 * Sigma8 / res;
   if(ThisTask == 0) printf("Normalization adjusted to Sigma8=%lf (Normfac=%lf)...\n",Sigma8,Norm);
+  Norm *= pow(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm,3.0);
+  if(ThisTask == 0) printf("Normalization adjusted to correct for unit difference: InputSpec=%g, UnitLength=%g (Normfac=%g)...\n",InputSpectrum_UnitLength_in_cm,UnitLength_in_cm,Norm);
 
   // for WhichSpectrum == 0 do not use power spectrum, only transfer function,
   // the file of which is set in the run parameters
@@ -352,7 +361,7 @@ double PowerSpec(double k) {
 
   switch (WhichSpectrum) {
     case 0:
-      power = Norm * pow(k, PrimordialIndex)  * TransferFunc(k) * TransferFunc(k);
+      power = Norm * pow(k*(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), PrimordialIndex) * pow(TransferFunc(k),2);
       break;
     case 1:
       power = PowerSpec_Tabulated(k);
@@ -374,7 +383,7 @@ double PowerSpec_Tabulated(double k) {
 
   kold = k;
 
-  // convert k to h/Mpc
+  // convert k to input units
   k *= (InputSpectrum_UnitLength_in_cm / UnitLength_in_cm);	
 
   logk = log10(k);
@@ -411,7 +420,7 @@ double PowerSpec_Tabulated(double k) {
 // Calculate the power spectrum at k for a power spectrum with Eisenstein & Hu parameterisation
 // ============================================================================================
 double PowerSpec_EH(double k) {
-  return Norm * pow(k, PrimordialIndex) * pow(TransferFunc_EH(k), 2);
+  return Norm * pow(k*(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), PrimordialIndex) * pow(TransferFunc_EH(k), 2);
 }
 
 // Fitted analytic expressions for Eisenstein & Hu Transfer function from Martin White
@@ -450,10 +459,11 @@ double TransferFunc_EH(double k) {
 // Return the integral over a Tophat profile
 // ==========================================
 double TopHatSigma2(double R) {
-  double alpha=0.0;
+  double alpha=0.0, limit;
   double result, error;
 
-  r_tophat = R;     // NB: 500/R is chosen as the integration boundary (infinity)
+  r_tophat = R;     
+  limit = 500.0/R;           // NB: 500/R is chosen as the integration boundary (infinity)
 
   gsl_function F;
   gsl_integration_workspace * w = gsl_integration_workspace_alloc (100000);
@@ -461,7 +471,7 @@ double TopHatSigma2(double R) {
   F.function = &sigma2_int;
   F.params = &alpha;
      
-  gsl_integration_qag(&F,0,500.0/R,1e-6,1e-4,100000,GSL_INTEG_GAUSS41,w,&result,&error); 
+  gsl_integration_qag(&F,0,limit,1e-6,1e-4,100000,GSL_INTEG_GAUSS41,w,&result,&error); 
      
   gsl_integration_workspace_free (w);
       
@@ -481,7 +491,9 @@ double sigma2_int(double k, void * params) {
   if(kr < 1e-8) return 0;
 
   w = 3 * (sin(kr) / kr3 - cos(kr) / kr2);
-  x = k * k * w * w * PowerSpec(k);
+  x = k * k * w * w * PowerSpec(k/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm));
+
+  //if (ThisTask == 0) printf("%lf, %lf\n" k, x);
 
   return x;
 }

@@ -1,6 +1,6 @@
 /* ==========================================================================*/
-/*   Copyright (c) 2015       Cullan Howlett & Marc Manera,                  */
-/*                            Institute of Cosmology and Gravitation         */
+/*   Version 1.2.             Cullan Howlett & Marc Manera,                  */
+/*   Copyright (c) 2015       Institute of Cosmology and Gravitation         */
 /*                            (University of Portsmouth) & University        */
 /*                            College London.                                */
 /*                                                                           */
@@ -22,6 +22,8 @@
 
 /* ============================================================================*/
 /* This file contains all extra routines associated with lightcone simulations */
+/* v1.2: Particle positions and velocities are now output in user-defined      */
+/*       units as opposed to always being in Mpc/h                             */
 /* ============================================================================*/
 
 #include "vars.h"
