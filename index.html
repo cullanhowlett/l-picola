@@ -1,42 +1,36 @@
 <!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on https://github.com/jonrohan -->
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>L-PICOLA by CullanHowlett</title>
 
-  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen">
-  <link rel="stylesheet" href="stylesheets/github-dark.css">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="javascripts/script.js"></script>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">L-PICOLA</h1>
+        <p class="header">Sweet simulations with added caffeine</p>
 
-  <title>L-PICOLA</title>
-  <meta name="description" content="Sweet simulations with added caffeine">
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/CullanHowlett/l-picola/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/CullanHowlett/l-picola/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/CullanHowlett/l-picola">View On GitHub</a></li>
+        </ul>
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/CullanHowlett">CullanHowlett</a></p>
 
-</head>
 
-<body>
-
-  <div class="wrapper">
-    <header>
-      <h1 class="title">L-PICOLA</h1>
-    </header>
-    <div id="container">
-      <p class="tagline">Sweet simulations with added caffeine</p>
-      <div id="main" role="main">
-        <div class="download-bar">
-        <div class="inner">
-          <a href="https://github.com/CullanHowlett/l-picola/tarball/master" class="download-button tar"><span>Download</span></a>
-          <a href="https://github.com/CullanHowlett/l-picola/zipball/master" class="download-button zip"><span>Download</span></a>
-          <a href="https://github.com/CullanHowlett/l-picola" class="code">View L-PICOLA on GitHub</a>
-        </div>
-        <span class="blc"></span><span class="trc"></span>
-        </div>
-        <article class="markdown-body">
-          <p>L-PICOLA is a distributed-memory, <strong>parallel</strong> code for creating <strong>fast</strong>, <strong>accurate</strong>, dark matter simulations. </p>
+      </header>
+      <section>
+        <p>L-PICOLA is a distributed-memory, <strong>parallel</strong> code for creating <strong>fast</strong>, <strong>accurate</strong>, dark matter simulations. </p>
 
 <ul>
 <li>
@@ -81,15 +75,15 @@
 <h3>
 <a id="12-11-dec-2015" class="anchor" href="#12-11-dec-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2 (11-Dec-2015)</h3>
 
-<p>Minor bug fixes and changes:
-<ul>
-  <li>Particle positions are now output in the units defined in the run_parameters.dat file as opposed Mpc/h.</li>
-  <li>Input Transfer function and power spectrum normalisation is now consistent regardless of units. Any required unit conversions here are applied as a more distinct normalisation factor. This stops the minor differences observed between runs with different units caused by numerical inaccuracies in the evaluation of &sigma;<sub>8</sub>. 
-  <li>Finally, a bug that caused z=9 outputs to have the file name z8p100 has been fixed. This was due to floating point inaccuracies in the representation of the value '0.1'.</li> 
-</ul>
-<b>Many thanks to Andrej Obuljen for pointing out these errors</b>
-</p>
+<p>Minor bug fixes and changes:</p>
 
+<ul>
+<li>Particle positions are now output in the units defined in the run_parameters.dat file as opposed Mpc/h.</li>
+<li>Input Transfer function and power spectrum normalisation is now consistent regardless of units. Any required unit conversions here are applied as a more distinct normalisation factor. This stops the minor differences observed between runs with different units caused by numerical inaccuracies in the evaluation of σ<sub>8</sub>. </li>
+<li>Finally, a bug that caused z=9 outputs to have the file name z8p100 has been fixed. This was due to floating point inaccuracies in the representation of the value '0.1'.</li>
+</ul>
+
+<p><strong>Many thanks to Andrej Obuljen for pointing out these errors</strong></p>
 
 <h3>
 <a id="11-08-jun-2015" class="anchor" href="#11-08-jun-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1 (08-Jun-2015)</h3>
@@ -105,26 +99,12 @@
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>The code is distributed under the GNU General Public License v2.0. You should get a copy of this when you download the code. This means that you can (and should :) ) modify and distribute the code in any manner you see fit. This also means, however, we provide no warranty or guarantee with the code. All we ask is that you let us know of any problems you have with the code, so we can try to come up with a fix, and that if you use the code for your research, would you please cite the code paper referenced above (<a href="http://arxiv.org/abs/1506.03737">Howlett et. al., 2015b</a>)</p>
-        </article>
-      </div>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
     </div>
-    <footer>
-      <div class="owner">
-      <p><a href="https://github.com/CullanHowlett" class="avatar"><img src="https://avatars3.githubusercontent.com/u/5528370?v=3&amp;s=60" width="48" height="48"></a> <a href="https://github.com/CullanHowlett">CullanHowlett</a> maintains <a href="https://github.com/CullanHowlett/l-picola">L-PICOLA</a></p>
-
-
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
-    </footer>
-  </div>
-  <div class="current-section">
-    <a href="#top">Scroll to top</a>
-    <a href="https://github.com/CullanHowlett/l-picola/tarball/master" class="tar">tar</a><a href="https://github.com/CullanHowlett/l-picola/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
-    <p class="name"></p>
-  </div>
-
-  
-</body>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
 </html>
