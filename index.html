@@ -1,36 +1,25 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>L-PICOLA by CullanHowlett</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1 class="header">L-PICOLA</h1>
-        <p class="header">Sweet simulations with added caffeine</p>
+    <section class="page-header">
+      <h1 class="project-name">L-PICOLA</h1>
+      <h2 class="project-tagline">Sweet simulations with added caffeine</h2>
+      <a href="https://github.com/CullanHowlett/l-picola" class="btn">View on GitHub</a>
+      <a href="https://github.com/CullanHowlett/l-picola/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/CullanHowlett/l-picola/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <ul>
-          <li class="download"><a class="buttons" href="https://github.com/CullanHowlett/l-picola/zipball/master">Download ZIP</a></li>
-          <li class="download"><a class="buttons" href="https://github.com/CullanHowlett/l-picola/tarball/master">Download TAR</a></li>
-          <li><a class="buttons github" href="https://github.com/CullanHowlett/l-picola">View On GitHub</a></li>
-        </ul>
-
-        <p class="header">This project is maintained by <a class="header name" href="https://github.com/CullanHowlett">CullanHowlett</a></p>
-
-
-      </header>
-      <section>
-        <p>L-PICOLA is a distributed-memory, <strong>parallel</strong> code for creating <strong>fast</strong>, <strong>accurate</strong>, dark matter simulations. </p>
+    <section class="main-content">
+      <p>L-PICOLA is a distributed-memory, <strong>parallel</strong> code for creating <strong>fast</strong>, <strong>accurate</strong>, dark matter simulations. </p>
 
 <ul>
 <li>
@@ -48,7 +37,7 @@
 <p>You can download the source code using the links up the top. Furthermore, the code is still under active development so if you feel like getting your hands dirty, just fork the code using the GitHub link.</p>
 
 <h2>
-<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic Usage</h2>
+<a id="basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic Usage</h2>
 
 <p>We have included a detailed User Guide with the source code. You should find all the information on the different options within, and inputs required, by the code.  As a basic example, you'll first need the <a href="http://www.open-mpi.org/">MPI</a>, <a href="http://www.fftw.org/">FFTW-3</a> and <a href="http://www.gnu.org/software/gsl/">GSL</a> libraries installed.</p>
 
@@ -61,7 +50,7 @@
 <p>This will run the example included with the distribution on 8 processors. </p>
 
 <h2>
-<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h2>
+<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contributors</h2>
 
 <p>Cullan Howlett (ICG, Portsmouth)</p>
 
@@ -70,10 +59,23 @@
 <p>Will Percival (ICG, Portsmouth)</p>
 
 <h2>
-<a id="version" class="anchor" href="#version" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version</h2>
+<a id="version" class="anchor" href="#version" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Version</h2>
 
 <h3>
-<a id="12-11-dec-2015" class="anchor" href="#12-11-dec-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.2 (11-Dec-2015)</h3>
+<a id="13-05-feb-2016" class="anchor" href="#13-05-feb-2016" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1.3 (05-Feb-2016)</h3>
+
+<p>Bug fixes for Non-Gaussian simulations:</p>
+
+<ul>
+<li>Input transfer function and power spectrum normalisation from previous fix (v1.2) still wrong for non-Gaussian runs when units of kpc were used instead of Mpc. This has been fixed and the units for both Gaussian and non-Gaussian runs are consistent within power.c</li>
+<li>The conversion between overdensity and Gaussian potential required as the first step for calculating the non-Gaussian potential 
+was hardcoded to be in (h/Mpc)^2. This meant the code gave incorrect initial displacements for non-Gaussian runs when units of kpc were used. This conversion now takes into account the user-defined length units.</li>
+</ul>
+
+<p><strong>Many thanks to Jonghee Kang for pointing out these errors</strong></p>
+
+<h3>
+<a id="12-11-dec-2015" class="anchor" href="#12-11-dec-2015" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1.2 (11-Dec-2015)</h3>
 
 <p>Minor bug fixes and changes:</p>
 
@@ -86,25 +88,28 @@
 <p><strong>Many thanks to Andrej Obuljen for pointing out these errors</strong></p>
 
 <h3>
-<a id="11-08-jun-2015" class="anchor" href="#11-08-jun-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.1 (08-Jun-2015)</h3>
+<a id="11-08-jun-2015" class="anchor" href="#11-08-jun-2015" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1.1 (08-Jun-2015)</h3>
 
 <p>Updated cosmological equations to support non-flat cosmologies. Now uses Matsubara (1995) approximation for the second order growth factor and derivatives. As a result the non-linear accuracy has slightly improved. </p>
 
 <h3>
-<a id="10-04-mar-2015" class="anchor" href="#10-04-mar-2015" aria-hidden="true"><span class="octicon octicon-link"></span></a>1.0 (04-Mar-2015)</h3>
+<a id="10-04-mar-2015" class="anchor" href="#10-04-mar-2015" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1.0 (04-Mar-2015)</h3>
 
 <p>Initial Release</p>
 
 <h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
 
 <p>The code is distributed under the GNU General Public License v2.0. You should get a copy of this when you download the code. This means that you can (and should :) ) modify and distribute the code in any manner you see fit. This also means, however, we provide no warranty or guarantee with the code. All we ask is that you let us know of any problems you have with the code, so we can try to come up with a fix, and that if you use the code for your research, would you please cite the code paper referenced above (<a href="http://arxiv.org/abs/1506.03737">Howlett et. al., 2015b</a>)</p>
-      </section>
-      <footer>
-        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/CullanHowlett/l-picola">L-PICOLA</a> is maintained by <a href="https://github.com/CullanHowlett">CullanHowlett</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-		
+
+    </section>
+
+  
   </body>
 </html>
