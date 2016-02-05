@@ -721,7 +721,7 @@ void Output(double A, double Z, double Dv, double Dv2) {
   unsigned int n;
   double fac = Hubble/pow(A,1.5);
   double lengthfac = 1.0;   // Keep positions in user-specified units (Originally converted positions to Mpc/h)
-  double velfac    = 1.0;   // Keep velocities in user-epcified units (Originally converted velocities to km/s)
+  double velfac    = 1.0;   // Keep velocities in user-specified units (Originally converted velocities to km/s)
 
 #ifdef GADGET_STYLE
   size_t bytes;

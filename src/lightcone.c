@@ -22,8 +22,9 @@
 
 /* ============================================================================*/
 /* This file contains all extra routines associated with lightcone simulations */
-/* v1.2: Particle positions and velocities are now output in user-defined      */
-/*       units as opposed to always being in Mpc/h                             */
+/* v1.3: Particle positions and velocities are now output in user-defined      */
+/*       units as opposed to always being in Mpc/h. Hardcoded 'boundary' value */
+/*       for checking necessary replicates is now also in user-defined units   */
 /* ============================================================================*/
 
 #include "vars.h"
@@ -283,10 +284,10 @@ void Drift_Lightcone(double A, double AFF, double AF, double Di, double Di2) {
   double dyyy, da1, da2, dv1, dv2;
   double dyyy_tmp, da1_tmp, da2_tmp, AL;
   double Delta_Pos[3];
-  double boundary = 20.0;
+  double boundary = 20.0*(3.085678e24/UnitLength_in_cm); // Constant 20 Mpc/h (should be large enough but might need is particles move a large distance in a timestep)
   double fac = Hubble/AF;                                // This differs from snapshot 'fac' by sqrt(AF) as we don't know after runtime what AF is. 
-  double lengthfac = UnitLength_in_cm/3.085678e24;       // Convert positions to Mpc/h
-  double velfac    = UnitVelocity_in_cm_per_s/1.0e5;     // Convert velocities to km/s
+  double lengthfac = 1.0;                                // Keep positions in user-specified units (Originally converted positions to Mpc/h)
+  double velfac    = 1.0;                                // Keep velocities in user-specified units (Originally converted velocities to km/s)
   double Rcomov_old  = Light/Hubble*KickStd(A,1.0);
   double Rcomov_new  = Light/Hubble*KickStd(AFF,1.0);
   double Rcomov_old2 = Rcomov_old*Rcomov_old; 

@@ -22,6 +22,7 @@
 
 /* ================================================================================================================*/
 /* This file contains the routines required to read in and save the generic kernel for the non-gaussian potentials.*/
+/* v1.3: Removed some unneccesary print statements.                                                                */
 /* ================================================================================================================*/
 
 #include "vars.h"
@@ -39,8 +40,6 @@ void read_kernel_table(void) {
     if (ThisTask == 0) printf("\nERROR: Can't read input kernel values in file '%s'.\n", buf);
     FatalError((char *)"kernel.c", 39);
   }
-  printf("%d, %d\n",ThisTask, fileno(fd));
-  fflush(stdout);
 
   NKernelTable = 0;
   do {
@@ -66,8 +65,6 @@ void read_kernel_table(void) {
     if (ThisTask == 0) printf("\nERROR: Can't read kernel input values in file '%s'.\n", buf);
     FatalError((char *)"kernel.c", 66);
   }
-  printf("%d, %d\n",ThisTask, fileno(fd));
-  fflush(stdout);
 
   NKernelTable = 0;
   do {

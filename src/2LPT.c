@@ -22,7 +22,12 @@
 
 /* ======================================================================================*/
 /* This file contains most of the routines for calculating the ZA and 2LPT displacements.*/
-/* v1.2: Edited print statements to output in displacements in correct units             */
+/* v1.2: Edited print statements to output displacements in correct units                */
+/* v1.3: Corrected units for non-gaussian potentials, via the Beta constant and the      */
+/*       k values that are used to get the potential and Transfer function. As per the   */
+/*       changes to power.c all k values used for the potential and TransferFunc calls   */
+/*       are converted to h/Mpc. The value of Beta is now in the user-defined units      */
+/*       (as it should have been anyway) as opposed to (h/Mpc)^2                         */
 /* ======================================================================================*/
 
 #include "vars.h"
@@ -403,6 +408,9 @@ void displacement_fields(void) {
   // Beta = 3/2 H(z)^2 a^2 Om(a) = 3/2 Ho^2 Om0 / a 
   Beta = 1.5 * Omega / FnlTime / (2998. * 2998. );
 
+  // Beta needs the units of UnitLength_in_cm
+  Beta *= pow(UnitLength_in_cm/3.085678e24, 2.0);
+
   for(i = 0; i < Nmesh; i++) {
     ii = Nmesh - i;
     if(ii == Nmesh) ii = 0;
@@ -450,8 +458,8 @@ void displacement_fields(void) {
             if(fabs(kvec[2]) * Box / (2 * PI) > Nsample / 2) continue;
           }
 
-          phig = -log(ampl) * Anorm * pow(kmag, PrimordialIndex);            // initial normalized power
-          phig = sqrt(phig) * pow(Box,-1.5) * Beta * DstartFnl / kmag2;      // amplitude of the initial gaussian potential
+          phig = -log(ampl) * Anorm * pow(kmag*(3.085678e24/UnitLength_in_cm), PrimordialIndex);              // initial normalized power (k needs to be in Mpc/h to match power.c)
+          phig = sqrt(phig) * pow(Box,-1.5) * Beta * DstartFnl / kmag2;                                       // amplitude of the initial gaussian potential
                
           if(k > 0) {
             if(i >= Local_x_start && i < (Local_x_start + Local_nx)) {
@@ -1095,7 +1103,7 @@ void displacement_fields(void) {
         kmag2 = kvec[0] * kvec[0] + kvec[1] * kvec[1] + kvec[2] * kvec[2];
         kmag = sqrt(kmag2);
 
-        t_of_k = TransferFunc(kmag);
+        t_of_k = TransferFunc(kmag*(3.085678e24/UnitLength_in_cm));   // kmag needs to be in h/Mpc as per power.c
         twb = t_of_k / (Beta * DstartFnl);   
 
         for(axes = 0; axes < 3; axes++) {

@@ -29,6 +29,13 @@
 /*       Now the calculation of the power spectrum and normalisation is independent of units,   */
 /*       except for a single factor which corrects for the units, AFTER the correction for the  */
 /*       input Sigma8                                                                           */ 
+/* v1.3: Unit conversions, again :(. The units were incorrect for non-Gaussian potentials as    */
+/*       the v1.2 correction only held for the Gaussian case. This time i've made it so that    */
+/*       the unit convention is (hopefully) more transparent. k values passed to PowerSpec or   */
+/*       TransferFunc must now always be in h/Mpc. Tabulated power spectra and transfer         */
+/*       functions are kept in their input units and the value of k for interpolation is then   */
+/*       converted from h/Mpc only when necessary. All checking of these inputs and any warning */
+/*       etc. are now also solely in h/Mpc.                                                     */
 /* =============================================================================================*/
 
 #include "vars.h"
@@ -69,6 +76,7 @@ void read_transfer_table(void) {
   int i;
   double k, t;
   double Tlower;
+  double kmin,kmax;
 
   sprintf(buf, FileWithInputTransfer);
 
@@ -105,11 +113,18 @@ void read_transfer_table(void) {
   fflush(stdout);
 
   NTransferTable = 0;
+  kmin = 1.0e30;
+  kmax = 1.0e-30;
   do {
     if(fscanf(fd, " %le %le ", &k, &t) == 2) {
       TransferTable[NTransferTable].logk = log10(k);
       TransferTable[NTransferTable].logT = log10(t);
       NTransferTable++;
+
+      k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
+
+      if (k < kmin) kmin = k;
+      if (k > kmax) kmax = k;
     } else {
       break;
     }
@@ -117,22 +132,31 @@ void read_transfer_table(void) {
 
   fclose(fd);
 
+  //check if there is sufficient k-coverage 
+  double k_Nyquist = PI*Nsample/(Box*UnitLength_in_cm/3.085678e24);
+  double k_fundamental = 2.0*PI/(Box*UnitLength_in_cm/3.085678e24);
+
+  if((kmin > k_fundamental) || (kmax < k_Nyquist)) {
+    if (ThisTask == 0) printf("\nERROR: [kmin, kmax] = [%lf,%lf] h/Mpc are not sufficient to cover [k_fundamental, k_nyquist] = [%lf,%lf] h/Mpc.\n\n",kmin,kmax,k_fundamental,k_Nyquist);
+    FatalError((char *)"power.c", 133);
+  }
+
   // Sort in k
   qsort(TransferTable, NTransferTable, sizeof(struct trans_table), compare_transfer_logk); 
 
-  klower = pow(10.0, TransferTable[0].logk);
+  klower = pow(10.0, TransferTable[0].logk) * 1.0000001 * (3.085678e24/InputSpectrum_UnitLength_in_cm);
 
-  if(ThisTask == 0) printf("klower for transfer function is %lf...\n", klower);
+  if(ThisTask == 0) printf("klower for transfer function is %lf h/Mpc...\n", klower);
 
-  if(TransferTable[0].logk >= -4.6 ) {
+  if((TransferTable[0].logk + log10(3.085678e24/InputSpectrum_UnitLength_in_cm)) > -4.0 ) {
     if (ThisTask == 0) {
-      printf("\nWARNING: klower may be too large to normalize transfer function.\n");
+      printf("\nWARNING: klower may be too large to normalize power.\n");
       printf("         Values outside the input range will be taken to be zero.\n\n");
     }
   }
-  if(TransferTable[NTransferTable].logk <= log10(500./8.)) {
+  if((TransferTable[NTransferTable].logk + log10(3.085678e24/InputSpectrum_UnitLength_in_cm)) <= log10(500./8.)) {
     if (ThisTask == 0) {
-      printf("\nWARNING: kmax may be too small to normalize transfer function.\n");
+      printf("\nWARNING: kmax may be too small to normalize power.\n");
       printf("         Values outside the input range will be taken to be zero.\n\n");
     }
   }
@@ -184,8 +208,8 @@ double TransferFunc_Tabulated(double k) {
 
   kold = k;
 
-  // convert to h/Mpc
-  k *= (InputSpectrum_UnitLength_in_cm / UnitLength_in_cm);     
+  // convert to input units
+  k *= (InputSpectrum_UnitLength_in_cm/3.085678e24);     
 
   logk = log10(k);
 
@@ -234,7 +258,7 @@ void initialize_powerspectrum(void) {
 
   Norm = Sigma8 * Sigma8 / res;
   if(ThisTask == 0) printf("Normalization adjusted to Sigma8=%lf (Normfac=%lf)...\n",Sigma8,Norm);
-  Norm *= pow(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm,3.0);
+  Norm *= pow(3.085678e24/UnitLength_in_cm,3.0);
   if(ThisTask == 0) printf("Normalization adjusted to correct for unit difference: InputSpec=%g, UnitLength=%g (Normfac=%g)...\n",InputSpectrum_UnitLength_in_cm,UnitLength_in_cm,Norm);
 
   // for WhichSpectrum == 0 do not use power spectrum, only transfer function,
@@ -288,15 +312,15 @@ void read_power_table(void) {
   fflush(stdout);
 
   NPowerTable = 0;
-  kmin = 2 * PI / 0.0001 ;  // 10000 h/Mpc
-  kmax = 2 * PI / 10000.0;  // 0.0001 h/Mpc
+  kmin = 1.0e30;
+  kmax = 1.0e-30;
   do {
     if(fscanf(fd, " %lg %lg ", &k, &p) == 2) {
       PowerTable[NPowerTable].logk = log10(k);
       PowerTable[NPowerTable].logP = log10(p);
       NPowerTable++;
 
-      k /= (InputSpectrum_UnitLength_in_cm/3.085678e24); // convert to h/Mpc
+      k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
 
       if (k < kmin) kmin = k;
       if (k > kmax) kmax = k;
@@ -319,19 +343,19 @@ void read_power_table(void) {
   // Sort by k
   qsort(PowerTable, NPowerTable, sizeof(struct pow_table), compare_logk);
 
-  klower = pow(10.0, PowerTable[0].logk) * 1.0000001;
+  klower = pow(10.0, PowerTable[0].logk) * 1.0000001 * (3.085678e24/InputSpectrum_UnitLength_in_cm);
 
-  if(ThisTask == 0) printf("klower for power spectrum is %f...\n",klower);
+  if(ThisTask == 0) printf("klower for power spectrum is %f h/Mpc...\n",klower);
 
-  if(PowerTable[0].logk >= -4.6 ) {
+  if((PowerTable[0].logk + log10(3.085678e24/InputSpectrum_UnitLength_in_cm)) > -4.0 ) {
     if (ThisTask == 0) {
       printf("\nWARNING: klower may be too large to normalize power.\n");
       printf("         Values outside the input range will be taken to be zero.\n\n");
     }
   }
-  if(PowerTable[NTransferTable].logk <= log10(500./8.)) {
+  if((PowerTable[NTransferTable].logk + log10(3.085678e24/InputSpectrum_UnitLength_in_cm)) <= log10(500.0/8.0)) {
     if (ThisTask == 0) {
-      printf("\nWARNING: kmax may be too small to normalize the power spectrum.\n");
+      printf("\nWARNING: kmax may be too small to normalize the power.\n");
       printf("         Values outside the input range will be taken to be zero.\n\n");
     }
   }
@@ -359,9 +383,12 @@ double PowerSpec(double k) {
 
   double power;
 
+  k *= 3.085678e24/UnitLength_in_cm;   // Convert k to Mpc/h (everything internal can be Mpc/h, about this point, 
+                                       // as I'm just getting confused with units otherwise)
+
   switch (WhichSpectrum) {
     case 0:
-      power = Norm * pow(k*(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), PrimordialIndex) * pow(TransferFunc(k),2);
+      power = Norm * pow(k, PrimordialIndex) * pow(TransferFunc(k),2);
       break;
     case 1:
       power = PowerSpec_Tabulated(k);
@@ -384,7 +411,7 @@ double PowerSpec_Tabulated(double k) {
   kold = k;
 
   // convert k to input units
-  k *= (InputSpectrum_UnitLength_in_cm / UnitLength_in_cm);	
+  k *= (InputSpectrum_UnitLength_in_cm/3.085678e24);	
 
   logk = log10(k);
 
@@ -420,7 +447,7 @@ double PowerSpec_Tabulated(double k) {
 // Calculate the power spectrum at k for a power spectrum with Eisenstein & Hu parameterisation
 // ============================================================================================
 double PowerSpec_EH(double k) {
-  return Norm * pow(k*(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), PrimordialIndex) * pow(TransferFunc_EH(k), 2);
+  return Norm * pow(k, PrimordialIndex) * pow(TransferFunc_EH(k), 2);
 }
 
 // Fitted analytic expressions for Eisenstein & Hu Transfer function from Martin White
@@ -439,8 +466,8 @@ double TransferFunc_EH(double k) {
   if(OmegaBaryon == 0)
     ombh2 = 0.04 * HubbleParam * HubbleParam;
 
-  // convert k to h/Mpc
-  k *= (3.085678e24 / UnitLength_in_cm);	
+  // convert k to h/Mpc (Obsolete: now k is already in Mpc/h)
+  //k *= (3.085678e24 / UnitLength_in_cm);	
 
   theta = 2.728 / 2.7;
   ommh2 = omegam * hubble * hubble;
@@ -491,7 +518,7 @@ double sigma2_int(double k, void * params) {
   if(kr < 1e-8) return 0;
 
   w = 3 * (sin(kr) / kr3 - cos(kr) / kr2);
-  x = k * k * w * w * PowerSpec(k/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm));
+  x = k * k * w * w * PowerSpec(k*UnitLength_in_cm/3.085678e24);
 
   //if (ThisTask == 0) printf("%lf, %lf\n" k, x);
 
