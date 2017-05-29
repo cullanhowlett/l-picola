@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
   // AFF is the scale factor to which we should drift the particle positions.
   double AI=A,AF=A,AFF=A;  
 
-  displacement_fields();
+  displacement_fields(); 
     
   P = (struct part_data *) malloc((int)(ceil(NumPart*Buffer))*sizeof(struct part_data));
 
@@ -632,9 +632,9 @@ void Kick(double AI, double AF, double A, double Di, double Di2) {
   double q1,q2;
   double ax,ay,az;
     
-  sumx=0;
-  sumy=0;
-  sumz=0; 
+  sumx=0.0;
+  sumy=0.0;
+  sumz=0.0; 
 
   if (DeltaA == 0) {
     dda=KickCOLA(AI,AF,A);
@@ -673,7 +673,9 @@ void Kick(double AI, double AF, double A, double Di, double Di2) {
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumx,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumy,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumz,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);  
-    
+  
+  printf("%12.6lf, %12.6lf, %12.6lf\n", sumx, sumy, sumz);
+  
   sumx /= (double)TotNumPart;  // We will subtract these to conserve momentum. 
   sumy /= (double)TotNumPart;  // Should be conserved, but just in case 3-linear interpolation makes a problem.
   sumz /= (double)TotNumPart;  // Never checked whether this makes a difference.
@@ -752,8 +754,8 @@ void Output(double A, double Z, double Dv, double Dv2) {
           header.mass[k] = 0;
         }
         header.npart[1] = NumPart;
-        header.npartTotal[1] = TotNumPart;
-        header.npartTotal[2] = (TotNumPart >> 32);
+        header.npartTotal[1] = (unsigned int) TotNumPart;
+        header.npartTotalHighWord[1] = (unsigned int) (TotNumPart >> 32);
         header.mass[1] = (3.0*Omega*Hubble*Hubble*Box*Box*Box) / (8.0*PI*G*TotNumPart);
         header.time = A;
         header.redshift = Z;
@@ -765,7 +767,7 @@ void Output(double A, double Z, double Dv, double Dv2) {
         header.flag_metals = 0;
         header.flag_stellarage = 0;
         header.flag_metals = 0;
-        header.hashtabsize = 0;
+        header.flag_entropy_instead_u = 0;
 
         header.num_files = NTaskWithN;
 
@@ -806,8 +808,11 @@ void Output(double A, double Z, double Dv, double Dv2) {
 
         // write velocities
         my_fwrite(&dummy, sizeof(dummy), 1, fp);
+	printf("%12.6lf, %12.6lf, %12.6lf\n", sumx, sumy, sumz);
         for(n = 0, pc = 0; n < NumPart; n++) {
-          for(k = 0; k < 3; k++) block[3 * pc + k] = (float)(velfac*fac*(P[n].Vel[k]-sumx+(P[n].Dz[k]*Dv+P[n].D2[k]*Dv2)*UseCOLA));
+          block[3 * pc] = (float)(velfac*fac*(P[n].Vel[0]-sumx+(P[n].Dz[0]*Dv+P[n].D2[0]*Dv2)*UseCOLA));
+          block[3 * pc + 1] = (float)(velfac*fac*(P[n].Vel[1]-sumy+(P[n].Dz[1]*Dv+P[n].D2[1]*Dv2)*UseCOLA));
+          block[3 * pc + 2] = (float)(velfac*fac*(P[n].Vel[2]-sumz+(P[n].Dz[2]*Dv+P[n].D2[2]*Dv2)*UseCOLA));
           pc++;
           if(pc == blockmaxlen) {
             my_fwrite(block, sizeof(float), 3 * pc, fp);

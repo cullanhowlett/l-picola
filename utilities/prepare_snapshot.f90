@@ -32,8 +32,9 @@ program prepare_snapshot
     real*8  :: HubbleParam
     integer :: flag_stellarage
     integer :: flag_metals
-    integer :: hashtabsize
-    character :: fill*84   !to fill the header
+    integer :: npartTotalHighWord(0:5) !should be unsigned integer but not supported by fortran90
+    integer :: flag_entropy_instead_u
+    character :: fill*60   !to fill the header
   end type io_gheader
 
   ! Other variables
@@ -70,7 +71,8 @@ program prepare_snapshot
     read(11) (gheader%npart(j),j=0,5),(gheader%mass(j),j=0,5),gheader%time,gheader%redshift, &
        & gheader%flag_sfr,gheader%flag_feedback,(gheader%npartTotal(j),j=0,5),gheader%flag_cooling,& 
        & gheader%num_files,gheader%BoxSize,gheader%Omega0,gheader%OmegaL0,gheader%HubbleParam, &
-       & gheader%flag_stellarage,gheader%flag_metals,gheader%hashtabsize,gheader%fill
+       & gheader%flag_stellarage,gheader%flag_metals,(gheader%npartTotalHighWord(j),j=0,5), &
+       & gheader%flag_entropy_instead_u,gheader%fill
     print*, gheader%redshift
 
     ! Read in the particle data
@@ -79,7 +81,7 @@ program prepare_snapshot
     allocate(id(gheader%npart(1)))
     read(11)((r(j,k),j=1,3),k=1,gheader%npart(1))
     read(11)((v(j,k),j=1,3),k=1,gheader%npart(1))
-    read(11)(id(j),j=1,gheader%npart(1)) 
+    !read(11)(id(j),j=1,gheader%npart(1)) 
     write(red_str1,'(i1)') int(gheader%redshift)
     write(red_str2,'(i1)') nint(10.0*(gheader%redshift-int(gheader%redshift)))
     close(11)
@@ -89,7 +91,8 @@ program prepare_snapshot
             &   //trim(adjustl(red_str2))//'_reform.'//trim(adjustl(file_str))
     open(10,file=filename,form='formatted')
     do j = 1, gheader%npart(1)
-      write(10,'(I15, 6F15.6)') id(j), r(1,j), r(2,j), r(3,j), v(1,j), v(2,j), v(3,j)
+      write(10,'(6F15.6)') r(1,j), r(2,j), r(3,j), v(1,j), v(2,j), v(3,j)
+      !write(10,'(I15, 6F15.6)') id(j), r(1,j), r(2,j), r(3,j), v(1,j), v(2,j), v(3,j)
     end do
 
     deallocate(id, r, v)
