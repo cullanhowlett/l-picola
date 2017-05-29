@@ -673,9 +673,7 @@ void Kick(double AI, double AF, double A, double Di, double Di2) {
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumx,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumy,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);
   ierr = MPI_Allreduce(MPI_IN_PLACE,&sumz,1,MPI_DOUBLE,MPI_SUM,MPI_COMM_WORLD);  
-  
-  printf("%12.6lf, %12.6lf, %12.6lf\n", sumx, sumy, sumz);
-  
+   
   sumx /= (double)TotNumPart;  // We will subtract these to conserve momentum. 
   sumy /= (double)TotNumPart;  // Should be conserved, but just in case 3-linear interpolation makes a problem.
   sumz /= (double)TotNumPart;  // Never checked whether this makes a difference.
