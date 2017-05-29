@@ -123,9 +123,10 @@ extern struct io_header_1 {
   double OmegaLambda;         // vacuum energy density
   double HubbleParam;         // little 'h'
   int flag_stellarage;        // flags whether the age of newly formed stars is recorded and saved
-  int flag_metals;            // flags whether metal enrichment is included
-  int hashtabsize;            // gives the size of the hashtable belonging to this snapshot file
-  char fill[84];              // Fills to 256 Bytes
+  int flag_metals;                     // flags whether metal enrichment is included
+  unsigned int npartTotalHighWord[6];  // High word of the total number of particles of each type
+  int  flag_entropy_instead_u;         // flags that IC-file contains entropy instead of u
+  char fill[60];                       // fills to 256 Bytes
 }
 header;
 #endif
