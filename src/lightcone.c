@@ -1,5 +1,5 @@
 /* ==========================================================================*/
-/*   Version 1.2.             Cullan Howlett & Marc Manera,                  */
+/*   Version 1.3.             Cullan Howlett & Marc Manera,                  */
 /*   Copyright (c) 2015       Institute of Cosmology and Gravitation         */
 /*                            (University of Portsmouth) & University        */
 /*                            College London.                                */
@@ -115,9 +115,9 @@ void flag_replicates(double Rcomov_old, double Rcomov_new, double boundary) {
             for (kk = 0; kk < 2; kk++) {
 
               // Include a buffer region (boundary) to account for the fact that the particle might move beyond the box boundaries, 20Mpc should be enough.
-              Xvert = (i+((ii*Local_np+Local_p_start)/(double)Nsample))*Box - Origin_x + boundary;
-              Yvert = (j+jj)*Box - Origin_y + boundary;
-              Zvert = (k+kk)*Box - Origin_z + boundary;
+              Xvert = (i+((ii*Local_np+Local_p_start)/(double)Nsample))*Box - Origin_x + pow(-1, ii+1)*boundary;
+              Yvert = (j+jj)*Box - Origin_y + pow(-1, jj+1)*boundary;
+              Zvert = (k+kk)*Box - Origin_z + pow(-1, kk+1)*boundary;
               Rvert = Xvert*Xvert+Yvert*Yvert+Zvert*Zvert;
                   
               if (Rvert < Rcomov_new2) repcount_low++;
@@ -146,22 +146,22 @@ void flag_replicates(double Rcomov_old, double Rcomov_new, double boundary) {
           double RightX = i+((Local_np+Local_p_start)/(double)Nsample);
 
           // Check the two faces perpendicular to the x-axis (don't forget these are different depending on the task). Don't forget to include the boundary region
-          if (Origin_x < LeftX*Box) {
-            dist_face_old = Origin_x - LeftX*Box - boundary;
+          if (Origin_x < LeftX*Box - boundary) {
+            dist_face_old = Origin_x - LeftX*Box + boundary;
             dist_face_old *= dist_face_old;
             dist_face_old += nearest_dist(Origin_y, Origin_z, j, k, j+1, k+1, boundary);
-          } else if (Origin_x > RightX*Box) {
+          } else if (Origin_x > RightX*Box + boundary) {
             dist_face_old = Origin_x - RightX*Box - boundary;
             dist_face_old *= dist_face_old;
             dist_face_old += nearest_dist(Origin_y, Origin_z, j, k, j+1, k+1, boundary);
           }
 
           // Check the two faces perpendicular to the y-axis.
-          if (Origin_y < j*Box) {
-            dist_face_new = Origin_y - j*Box - boundary;
+          if (Origin_y < j*Box - boundary) {
+            dist_face_new = Origin_y - j*Box + boundary;
             dist_face_new *= dist_face_new;
             dist_face_new += nearest_dist(Origin_x, Origin_z, LeftX, k, RightX, k+1, boundary);
-          } else if (Origin_y > (j+1)*Box) {
+          } else if (Origin_y > (j+1)*Box + boundary) {
             dist_face_new = Origin_y - (j+1)*Box - boundary;
             dist_face_new *= dist_face_new;
             dist_face_new += nearest_dist(Origin_x, Origin_z, LeftX, k, RightX, k+1, boundary);
@@ -169,11 +169,11 @@ void flag_replicates(double Rcomov_old, double Rcomov_new, double boundary) {
           if (dist_face_old > dist_face_new) dist_face_old = dist_face_new;
 
           // Check the two faces perpendicular to the z-axis.
-          if (Origin_z < k*Box) {
-            dist_face_new = Origin_z - k*Box - boundary;
+          if (Origin_z < k*Box - boundary) {
+            dist_face_new = Origin_z - k*Box + boundary;
             dist_face_new *= dist_face_new;
             dist_face_new += nearest_dist(Origin_x, Origin_y, LeftX, j, RightX, j+1, boundary);
-          } else if (Origin_z > (k+1)*Box) {
+          } else if (Origin_z > (k+1)*Box + boundary) {
             dist_face_new = Origin_z - (k+1)*Box - boundary;
             dist_face_new *= dist_face_new;
             dist_face_new += nearest_dist(Origin_x, Origin_y, LeftX, j, RightX, j+1, boundary);
@@ -208,44 +208,45 @@ double nearest_dist(double px, double py, double ix, double iy, double jx, doubl
   // the distance, 'dist1', of the projection of the projected origin on the plane onto an infinite line containing the line segment (2D -> 1D).
   // The distance along the line between the 1D projection and the end of the line segment is then dist2. NOTE: for projections that land
   // inside the face, .i.e. within all four line segments, we don't care about dist1 or dist2 as the shortest distance between the point and the
-  // replicate is just dist1. Also, we only have to do a maximum of 2 line segments then as this is the most that any point can see.
-  if (px < ix*Box) {
-    dist2 = -boundary;
-    dist1 = px - ix*Box - boundary;
-    if (py < iy*Box) {
-      dist2 += py - iy*Box; 
-    } else if (py > jy*Box) {
-      dist2 += py - jy*Box;
+  // replicate is just the distance to the plane (computed previously). Also, we only have to do a maximum of 2 line segments then as this is the most 
+  // that any point can see.
+  if (px < ix*Box - boundary) {
+    dist1 = px - ix*Box + boundary;
+    dist2 = 0.0;
+    if (py < iy*Box - boundary) {
+      dist2 = py - iy*Box + boundary; 
+    } else if (py > jy*Box + boundary) {
+      dist2 = py - jy*Box - boundary;
     }          
     dist_line_old = dist1*dist1+dist2*dist2;
-  } else if (px > jx*Box) {
-    dist2 = -boundary;
+  } else if (px > jx*Box + boundary) {
     dist1 = px - jx*Box - boundary;
-    if (py < iy*Box) {
-      dist2 += py - iy*Box; 
-    } else if (py > jy*Box) {
-      dist2 += py - jy*Box;
+    dist2 = 0.0;
+    if (py < iy*Box - boundary) {
+      dist2 = py - iy*Box + boundary; 
+    } else if (py > jy*Box + boundary) {
+      dist2 = py - jy*Box - boundary;
     }          
     dist_line_old = dist1*dist1+dist2*dist2;
   }
  
   // The third and fourth line segments
-  if (py < iy*Box) {
-    dist2 = -boundary;
-    dist1 = py - iy*Box - boundary;
-    if (px < ix*Box) {
-      dist2 += px - ix*Box; 
-    } else if (px > jx*Box) {
-      dist2 += px - jx*Box;
+  if (py < iy*Box - boundary) {
+    dist1 = py - iy*Box + boundary;
+    dist2 = 0.0;
+    if (px < ix*Box - boundary) {
+      dist2 = px - ix*Box + boundary; 
+    } else if (px > jx*Box + boundary) {
+      dist2 = px - jx*Box - boundary;
     }        
     dist_line_new = dist1*dist1+dist2*dist2;
-  } else if (py > jy*Box) {
-    dist2 = -boundary;
+  } else if (py > jy*Box + boundary) {
     dist1 = py - jy*Box - boundary;
-    if (px < ix*Box) {
-      dist2 += px - ix*Box; 
-    } else if (px > jx*Box) {
-      dist2 += px - jx*Box;
+    dist2 = 0.0;
+    if (px < ix*Box - boundary) {
+      dist2 = px - ix*Box + boundary; 
+    } else if (px > jx*Box + boundary) {
+      dist2 = px - jx*Box - boundary;
     }        
     dist_line_new = dist1*dist1+dist2*dist2;
   }
@@ -284,7 +285,7 @@ void Drift_Lightcone(double A, double AFF, double AF, double Di, double Di2) {
   double dyyy, da1, da2, dv1, dv2;
   double dyyy_tmp, da1_tmp, da2_tmp, AL;
   double Delta_Pos[3];
-  double boundary = 20.0*(3.085678e24/UnitLength_in_cm); // Constant 20 Mpc/h (should be large enough but might need is particles move a large distance in a timestep)
+  double boundary = 20.0*(3.085678e24/UnitLength_in_cm); // Constant 20 Mpc/h (should be large enough but might need more if particles move a large distance in a timestep)
   double fac = Hubble/AF;                                // This differs from snapshot 'fac' by sqrt(AF) as we don't know after runtime what AF is. 
   double lengthfac = 1.0;                                // Keep positions in user-specified units (Originally converted positions to Mpc/h)
   double velfac    = 1.0;                                // Keep velocities in user-specified units (Originally converted velocities to km/s)
