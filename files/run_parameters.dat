@@ -39,10 +39,10 @@ FileWithInputTransfer  files/input_transfer.dat    % filename of tabulated trans
 
 % Cosmological Parameters
 % =======================
-Omega            0.25        % Total matter density (CDM + Baryons at z=0).
-OmegaBaryon      0.04        % Baryon density (at z=0).
-OmegaLambda      0.75        % Dark Energy density (at z=0)
-HubbleParam      0.7         % Hubble parameter, 'little h' (only used for power spectrum parameterization).
+Omega            0.31        % Total matter density (CDM + Baryons at z=0).
+OmegaBaryon      0.048        % Baryon density (at z=0).
+OmegaLambda      0.69        % Dark Energy density (at z=0)
+HubbleParam      0.69         % Hubble parameter, 'little h' (only used for power spectrum parameterization).
 Sigma8           0.83        % Power spectrum normalization (power spectrum may already be normalized correctly).
 PrimordialIndex  0.96        % Used to tilt the power spectrum for non-tabulated power spectra (if != 1.0 and nongaussian, generic flag required)
 
