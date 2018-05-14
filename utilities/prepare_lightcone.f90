@@ -62,7 +62,7 @@ program prepare_lightcone
         ! Reformat the individual particles in the chunk
         allocate(r(3,nchunk))
         allocate(v(3,nchunk))
-        read(11)((r(1,j),r(2,j),r(3,j),v(1,j),v(2,j),v(3,j)),j=1,nchunk)
+        read(11)(r(1,j),r(2,j),r(3,j),v(1,j),v(2,j),v(3,j),j=1,nchunk)
         do j = 1, nchunk
           write(10,'(6F13.6)') r(1,j), r(2,j), r(3,j), v(1,j), v(2,j), v(3,j)
         enddo
