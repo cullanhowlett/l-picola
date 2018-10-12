@@ -72,9 +72,9 @@ void initialize_transferfunction(void) {
 void read_transfer_table(void) {
 
   FILE *fd;
-  char buf[500];
+  char buf[500], readbuf[500];
   int i;
-  double k, t;
+  double k, t, tnull;
   double Tlower;
   double kmin,kmax;
 
@@ -87,13 +87,17 @@ void read_transfer_table(void) {
   fflush(stdout);
 
   NTransferTable = 0;
-  do {
-    if(fscanf(fd, " %le %le ", &k, &t) == 2) {
-      NTransferTable++;
-    } else {
-      break;
+  while(fgets(readbuf,500,fd)) {
+    if(strncmp(readbuf,"#",1)==0) continue;
+    if(sscanf(readbuf, "%le %le", &k, &t) != 2) {
+      if(sscanf(readbuf, "%le %le %le %le %le %le %le %le %le %le %le %le %le", &k, &tnull, &tnull, &tnull, &tnull, &tnull, &t, &tnull, &tnull, &tnull, &tnull, &tnull, &tnull) != 13) {
+        if (ThisTask == 0) printf("\nERROR: Found wrong number of entries in row in transfer function file '%s': %s\n\n", buf, readbuf);
+        if (ThisTask == 0) printf("\n       Must be 2 (k, tk) or default CAMB size (13, with total in column 7).\n\n");
+        FatalError((char *)"power.c", 97);
+      }
     }
-  } while(1);
+    NTransferTable++;
+  }
 
   fclose(fd);
 
@@ -115,20 +119,24 @@ void read_transfer_table(void) {
   NTransferTable = 0;
   kmin = 1.0e30;
   kmax = 1.0e-30;
-  do {
-    if(fscanf(fd, " %le %le ", &k, &t) == 2) {
-      TransferTable[NTransferTable].logk = log10(k);
-      TransferTable[NTransferTable].logT = log10(t);
-      NTransferTable++;
-
-      k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
-
-      if (k < kmin) kmin = k;
-      if (k > kmax) kmax = k;
-    } else {
-      break;
+  while(fgets(readbuf,500,fd)) {
+    if(strncmp(readbuf,"#",1)==0) continue;
+    if(sscanf(readbuf, "%le %le", &k, &t) != 2) {
+      if(sscanf(readbuf, "%le %le %le %le %le %le %le %le %le %le %le %le %le", &k, &tnull, &tnull, &tnull, &tnull, &tnull, &t, &tnull, &tnull, &tnull, &tnull, &tnull, &tnull) != 13) {
+        if (ThisTask == 0) printf("\nERROR: Found wrong number of entries in row in transfer function file '%s': %s\n\n", buf, readbuf);
+        if (ThisTask == 0) printf("\n       Must be 2 (k, tk) or default CAMB size (13, with total in column 7).\n\n");
+        FatalError((char *)"power.c", 128);
+      }
     }
-  } while(1);
+    TransferTable[NTransferTable].logk = log10(k);
+    TransferTable[NTransferTable].logT = log10(t);
+    NTransferTable++;
+
+    k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
+
+    if (k < kmin) kmin = k;
+    if (k > kmax) kmax = k;
+  }
 
   fclose(fd);
 
@@ -273,7 +281,7 @@ void initialize_powerspectrum(void) {
 void read_power_table(void) {
 
   FILE *fd;
-  char buf[500];
+  char buf[500], readbuf[500];
   double k, p;
   double kmin,kmax;
 
@@ -286,13 +294,14 @@ void read_power_table(void) {
   fflush(stdout);
 
   NPowerTable = 0;
-  do {
-    if(fscanf(fd, " %lg %lg ", &k, &p) == 2) {
-      NPowerTable++;
-    } else {
-      break;
+  while(fgets(readbuf,500,fd)) {
+    if(strncmp(readbuf,"#",1)==0) continue;
+    if(sscanf(readbuf, "%lg %lg", &k, &p) != 2) {
+      if (ThisTask == 0) printf("\nERROR: Found wrong number of entries in row in power spectrum file '%s': %s. Must be 2 (k, pk)\n\n", buf, readbuf);
+      FatalError((char *)"power.c", 301);
     }
-  } while(1);
+    NPowerTable++;
+  }
 
   fclose(fd);
 
@@ -314,20 +323,21 @@ void read_power_table(void) {
   NPowerTable = 0;
   kmin = 1.0e30;
   kmax = 1.0e-30;
-  do {
-    if(fscanf(fd, " %lg %lg ", &k, &p) == 2) {
-      PowerTable[NPowerTable].logk = log10(k);
-      PowerTable[NPowerTable].logP = log10(p);
-      NPowerTable++;
-
-      k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
-
-      if (k < kmin) kmin = k;
-      if (k > kmax) kmax = k;
-    } else {
-      break;
+  while(fgets(readbuf,500,fd)) {
+    if(strncmp(readbuf,"#",1)==0) continue;
+    if(sscanf(readbuf, "%lg %lg", &k, &p) != 2) {
+      if (ThisTask == 0) printf("\nERROR: Found wrong number of entries in row in power spectrum file '%s': %s. Must be 2 (k, pk)\n\n", buf, readbuf);
+      FatalError((char *)"power.c", 301);
     }
-  } while(1);
+    PowerTable[NPowerTable].logk = log10(k);
+    PowerTable[NPowerTable].logP = log10(p);
+    NPowerTable++;
+
+    k *= (3.085678e24/InputSpectrum_UnitLength_in_cm); // convert to h/Mpc
+
+    if (k < kmin) kmin = k;
+    if (k > kmax) kmax = k;
+  }
 
   fclose(fd);
 
