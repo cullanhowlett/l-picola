@@ -152,7 +152,7 @@ endif
 
 # Compile the code
 # ================
-LIBS   =   -lm $(MPI_LIBs) $(FFTW_LIBS) $(GSL_LIBS)
+LIBS   =   -lm $(MPI_LIBS) $(FFTW_LIBS) $(GSL_LIBS)
 
 CFLAGS =   $(OPTIMIZE) $(FFTW_INCL) $(GSL_INCL) $(MPI_INCL) $(OPTIONS)
 
