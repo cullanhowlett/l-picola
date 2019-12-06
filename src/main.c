@@ -205,16 +205,26 @@ int main(int argc, char **argv) {
           P[coord].Dz[m] = ZA[m][coord];
           P[coord].D2[m] = LPT[m][coord];
           if (UseCOLA == 0) {
+#ifdef ONLY_ZA
+            P[coord].Vel[m] = P[coord].Dz[m]*Dv;
+#else
             P[coord].Vel[m] = P[coord].Dz[m]*Dv+P[coord].D2[m]*Dv2;
+#endif
           } else {
             P[coord].Vel[m] = 0.0;
           }
         }
 
+#ifdef ONLY_ZA
+        P[coord].Pos[0] = periodic_wrap((i+Local_p_start)*(Box/(double)Nsample)+P[coord].Dz[0]*Di);
+        P[coord].Pos[1] = periodic_wrap(j*(Box/(double)Nsample)+P[coord].Dz[1]*Di);
+        P[coord].Pos[2] = periodic_wrap(k*(Box/(double)Nsample)+P[coord].Dz[2]*Di);
+#else
         P[coord].Pos[0] = periodic_wrap((i+Local_p_start)*(Box/(double)Nsample)+P[coord].Dz[0]*Di+P[coord].D2[0]*Di2);
         P[coord].Pos[1] = periodic_wrap(j*(Box/(double)Nsample)+P[coord].Dz[1]*Di+P[coord].D2[1]*Di2);
         P[coord].Pos[2] = periodic_wrap(k*(Box/(double)Nsample)+P[coord].Dz[2]*Di+P[coord].D2[2]*Di2);
-
+#endif
+        
       }
     }
   }
@@ -245,7 +255,11 @@ int main(int argc, char **argv) {
     startcpu2 = (double)clock();
     startwall2 = MPI_Wtime();
 #endif
+#ifdef ONLY_ZA
+    Output(A,Init_Redshift,Dv,0.0);
+#else
     Output(A,Init_Redshift,Dv,Dv2);
+#endif
 #ifdef TIMING
     endcpu2 = (double)clock();
     endwall2 = MPI_Wtime();

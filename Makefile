@@ -4,11 +4,16 @@ EXEC = L-PICOLA
 
 # Choose the machine you are running on. Currently only SCIAMA2 is implemented, but it's easy to add more :)
 # ==========================================================================================================
-MACHINE = SCIAMA2
+#MACHINE = SCIAMA2
+#MACHINE = RAIJIN
+#MACHINE = PLEIADES
+#MACHINE = PAWSEY
+#MACHINE = g2
+MACHINE = LAPTOP
 
 # Options for optimization
 # ========================
-OPTIMIZE  = -O3 -Wall
+OPTIMIZE  = -O3
 
 # Various C preprocessor directives that change the way L-PICOLA is made
 # ====================================================================
@@ -23,6 +28,9 @@ OPTIONS += $(MEMORY_MODE)               # and by making the particle data single
 
 #LIGHTCONE = -DLIGHTCONE                 # Builds a lightcone based on the run parameters and only outputs particles
 #OPTIONS += $(LIGHTCONE)                 # at a given timestep if they have entered the lightcone 
+
+ONLY_ZA = -DONLY_ZA                    # Switch this on if you want ZA initial conditions (2LPT otherwise)
+OPTIONS += $(ONLY_ZA)
 
 GAUSSIAN = -DGAUSSIAN                   # Switch this if you want gaussian initial conditions (fnl otherwise)
 OPTIONS += $(GAUSSIAN) 
@@ -72,6 +80,54 @@ endif
   GSL_LIBS  = -L/opt/apps/libs/gsl/1.16/gcc-4.4.7/lib/  -lgsl -lgslcblas
   MPI_INCL  = -I/opt/gridware/pkg/mpi/openmpi/1.8.1/gcc-4.4.7/include
   MPI_LIBS  = -L/opt/gridware/pkg/mpi/openmpi/1.8.1/gcc-4.4.7/lib/ -lmpi
+endif
+
+ifeq ($(MACHINE),RAIJIN)
+  CC = icc
+  FFTW_INCL = -I/apps/fftw3/3.3.3/include/
+  FFTW_LIBS = -L/apps/fftw3/3.3.3/lib/ -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/apps/gsl/1.15/include/ 
+  GSL_LIBS  = -L/apps/gsl/1.15/lib/ -lgsl -lgslcblas
+  MPI_INCL  = -I/apps/openmpi/1.6.3/include/ 
+  MPI_LIBS  = -L/apps/openmpi/1.6.3/lib/  -lmpi
+endif
+
+ifeq ($(MACHINE),PLEIADES)
+  CC = mpicc
+  FFTW_INCL = -I/home/chowlett/libraries/include/
+  FFTW_LIBS = -L/home/chowlett/libraries/lib/ -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/opt/bldr/local/numerics/gsl/2.3/include/
+  GSL_LIBS  = -L/opt/bldr//local/numerics/gsl/2.3/lib/ -lgsl -lgslcblas
+  MPI_INCL  = -I/opt/bldr/local/distributed/openmpi/1.10.5/include/
+  MPI_LIBS  = -L/opt/bldr/local/distributed/openmpi/1.10.5/lib/  -lmpi
+endif
+
+ifeq ($(MACHINE),PAWSEY)
+  CC = cc
+  FFTW_INCL = -I/opt/fftw/3.3.4.0/haswell/include/
+  FFTW_LIBS = -L/opt/fftw/3.3.4.0/haswell/lib/pkgconfig/ -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/home/chowlett/libraries/gsl-1.16/include/gsl/
+  GSL_LIBS  = -L/home/chowlett/libraries/gsl-1.16/lib/ -lgsl -lgslcblas
+endif
+
+ifeq ($(MACHINE),g2)
+  CC = mpicc
+  FFTW_INCL = -I/usr/local/x86_64/gnu/fftw-3.3.3-mpi/include/
+  FFTW_LIBS = -L/usr/local/x86_64/gnu/fftw-3.3.3-mpi/lib/ -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/usr/local/x86_64/gnu/gsl-1.16/include/
+  GSL_LIBS  = -L/usr/local/x86_64/gnu/gsl-1.16/lib/ -lgsl -lgslcblas
+  MPI_INCL = -I/usr/local/x86_64/gnu/openmpi-1.8.3/include/
+  MPI_LIBS = -L/usr/local/x86_64/gnu/openmpi-1.8.3/lib/ -lmpi
+endif
+
+ifeq ($(MACHINE),LAPTOP)
+  CC = mpicc
+  FFTW_INCL = -I/usr/local/include/
+  FFTW_LIBS = -L/usr/local/lib/ -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/usr/local/include/gsl/
+  GSL_LIBS  = -L/usr/local/lib/ -lgsl -lgslcblas
+  MPI_INCL  = -I/usr/local/include/openmpi/
+  MPI_LIBS  = -L/usr/local/lib/openmpi/  -lmpi
 endif
 
 # =========================================================================================================================================================================================================

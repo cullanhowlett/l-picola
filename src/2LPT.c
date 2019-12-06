@@ -176,7 +176,7 @@ void displacement_fields(void) {
   double kvec[3], kmag, kmag2;
   double sumdis[3], sumdis2[3];
   double f1, f2, f3, f4, f5, f6, f7, f8;
-  double dis[3], dis2[3], maxdisp, max_disp_glob;
+  double dis[3], dis2[3], maxdisp, max_disp_glob, maxdisp_ZA, max_disp_glob_ZA;
   complex_kind *(cdigrad[6]);
   complex_kind *(cdisp[3]), *(cdisp2[3]);
   plan_kind Forward_plan, Inverse_plan;
@@ -1386,6 +1386,7 @@ void displacement_fields(void) {
           sumdis[axes]  += dis[axes];
           sumdis2[axes] += -3./7.*dis2[axes];
 
+          if(fabs(dis[axes]) > maxdisp_ZA) maxdisp_ZA = fabs(dis[axes]);
           if(fabs(dis[axes] - 3./7. * dis2[axes]) > maxdisp) maxdisp = fabs(dis[axes] - 3./7. * dis2[axes]);
         }
       }
@@ -1409,11 +1410,13 @@ void displacement_fields(void) {
     }
   }
 
+  MPI_Reduce(&maxdisp_ZA, &max_disp_glob_ZA, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
   MPI_Reduce(&maxdisp, &max_disp_glob, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
   if (ThisTask == 0) {
     printf("Calculated Zeldovich and 2LPT displacements...\n");
-    printf("Maximum displacement = %lf kpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob / (Box / Nmesh));
+    printf("Maximum ZA displacement = %lf kpc/h (%lf in units of the particle separation)...\n",max_disp_glob_ZA/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob_ZA / (Box / Nmesh));
+    printf("Maximum ZA+2LPT displacement = %lf kpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob / (Box / Nmesh));
     fflush(stdout);
   }
 
