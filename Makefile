@@ -121,7 +121,7 @@ ifeq ($(MACHINE),g2)
 endif
 
 ifeq ($(MACHINE),LAPTOP)
-  CC = mpicc
+  CC = /usr/local/bin/mpicc
   FFTW_INCL = -I/usr/local/include/
   FFTW_LIBS = -L/usr/local/lib/ -lfftw3_mpi -lfftw3
   GSL_INCL  = -I/usr/local/include/gsl/

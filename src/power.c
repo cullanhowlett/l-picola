@@ -503,14 +503,14 @@ double TopHatSigma2(double R) {
   limit = 500.0/R;           // NB: 500/R is chosen as the integration boundary (infinity)
 
   gsl_function F;
-  gsl_integration_workspace * w = gsl_integration_workspace_alloc (100000);
+  gsl_integration_cquad_workspace * w = gsl_integration_cquad_workspace_alloc(1000);
      
   F.function = &sigma2_int;
   F.params = &alpha;
      
-  gsl_integration_qag(&F,0,limit,1e-6,1e-4,100000,GSL_INTEG_GAUSS41,w,&result,&error); 
+  gsl_integration_cquad(&F,0,limit,1e-6,1e-6,w,&result,&error,NULL); 
      
-  gsl_integration_workspace_free (w);
+  gsl_integration_cquad_workspace_free (w);
       
   return result/(2.0*PI*PI);	
 }
