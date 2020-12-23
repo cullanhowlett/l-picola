@@ -47,6 +47,7 @@ static double R8;
 static double Norm;
 static double klower;
 static double r_tophat;
+static double Tlower;
 static struct pow_table {
   double logk, logP;
 } *PowerTable;
@@ -75,10 +76,9 @@ void read_transfer_table(void) {
   char buf[500], readbuf[500];
   int i;
   double k, t, tnull;
-  double Tlower;
   double kmin,kmax;
 
-  sprintf(buf, FileWithInputTransfer);
+  sprintf(buf, "%s", FileWithInputTransfer);
 
   if(!(fd = fopen(buf, "r"))) {
     if (ThisTask == 0) printf("\nERROR: Can't read input transfer function  in file '%s'.\n\n", buf);
@@ -108,7 +108,7 @@ void read_transfer_table(void) {
 
   TransferTable = (struct trans_table*)malloc(NTransferTable * sizeof(struct trans_table));
 
-  sprintf(buf, FileWithInputTransfer);
+  sprintf(buf, "%s", FileWithInputTransfer);
 
   if(!(fd = fopen(buf, "r"))) {
     if (ThisTask == 0) printf("\nERROR: Can't read input transfer function in file '%s'.\n\n", buf);
@@ -169,6 +169,8 @@ void read_transfer_table(void) {
     }
   }
 
+  // Normalises the transfer function to 1 on large scales. Needs to be reversed for 
+  // evaluating the power spectrum though. 
   Tlower = TransferTable[0].logT;      
   for(i=0; i < NTransferTable ; i++ ) TransferTable[i].logT -= Tlower;
       
@@ -204,6 +206,7 @@ double TransferFunc(double k) {
       break;
   }
 
+  //printf("%lf %lf\n", k, transfer);
   return transfer;
 }
 
@@ -271,7 +274,7 @@ void initialize_powerspectrum(void) {
 
   // for WhichSpectrum == 0 do not use power spectrum, only transfer function,
   // the file of which is set in the run parameters
-  if (WhichSpectrum == 0) Anorm = Norm;
+  if (WhichSpectrum == 0) Anorm = Norm*pow(10.0, 2.0*Tlower);
 
   return;
 }
@@ -285,7 +288,7 @@ void read_power_table(void) {
   double k, p;
   double kmin,kmax;
 
-  sprintf(buf, FileWithInputSpectrum);
+  sprintf(buf, "%s", FileWithInputSpectrum);
 
   if(!(fd = fopen(buf, "r"))) {
     if (ThisTask == 0) printf("\nERROR: Can't read input power spectrum in file '%s'.\n\n", buf);
@@ -312,7 +315,7 @@ void read_power_table(void) {
 
   PowerTable = (struct pow_table *)malloc(NPowerTable * sizeof(struct pow_table));
 
-  sprintf(buf, FileWithInputSpectrum);
+  sprintf(buf, "%s", FileWithInputSpectrum);
 
   if(!(fd = fopen(buf, "r"))) {
     if (ThisTask == 0) printf("\nERROR: Can't read input power spectrum in file '%s'.\n\n", buf);
@@ -398,7 +401,7 @@ double PowerSpec(double k) {
 
   switch (WhichSpectrum) {
     case 0:
-      power = Norm * pow(k, PrimordialIndex) * pow(TransferFunc(k),2);
+      power = Norm * pow(k, PrimordialIndex) * pow(TransferFunc(k)*pow(10.0,Tlower),2);   // We need to correct for the transfer function normalisation here
       break;
     case 1:
       power = PowerSpec_Tabulated(k);
@@ -466,6 +469,9 @@ double TransferFunc_EH(double k) {
   double q, theta, ommh2, a, s, gamma, L0, C0;
   double tmp;
   double omegam, ombh2, hubble;
+
+  // Transfer function normalisation (set to zero as this is NOT normalised to 1 as k -> 0)
+  Tlower = 0.0;
 
   // other input parameters
   hubble = HubbleParam;

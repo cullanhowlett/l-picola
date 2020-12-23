@@ -29,8 +29,8 @@ OPTIONS += $(MEMORY_MODE)               # and by making the particle data single
 #LIGHTCONE = -DLIGHTCONE                 # Builds a lightcone based on the run parameters and only outputs particles
 #OPTIONS += $(LIGHTCONE)                 # at a given timestep if they have entered the lightcone 
 
-ONLY_ZA = -DONLY_ZA                    # Switch this on if you want ZA initial conditions (2LPT otherwise)
-OPTIONS += $(ONLY_ZA)
+#ONLY_ZA = -DONLY_ZA                    # Switch this on if you want ZA initial conditions (2LPT otherwise)
+#OPTIONS += $(ONLY_ZA)
 
 GAUSSIAN = -DGAUSSIAN                   # Switch this if you want gaussian initial conditions (fnl otherwise)
 OPTIONS += $(GAUSSIAN) 

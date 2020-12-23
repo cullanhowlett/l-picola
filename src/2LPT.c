@@ -460,7 +460,9 @@ void displacement_fields(void) {
 
           phig = -log(ampl) * Anorm * pow(kmag*(3.085678e24/UnitLength_in_cm), PrimordialIndex);              // initial normalized power (k needs to be in Mpc/h to match power.c)
           phig = sqrt(phig) * pow(Box,-1.5) * Beta * DstartFnl / kmag2;                                       // amplitude of the initial gaussian potential
-               
+                                                                                                              // NOTE: DstartFnl is defined as the inverse of the value in 2LPTic, hence multiplied here
+          //printf("%d, %d, %d, %lf, %lf\n", i, j, k, DstartFnl, Beta);
+
           if(k > 0) {
             if(i >= Local_x_start && i < (Local_x_start + Local_nx)) {
               coord = ((i - Local_x_start) * Nmesh + j) * (Nmesh / 2 + 1) + k;
@@ -1104,7 +1106,7 @@ void displacement_fields(void) {
         kmag = sqrt(kmag2);
 
         t_of_k = TransferFunc(kmag*(3.085678e24/UnitLength_in_cm));   // kmag needs to be in h/Mpc as per power.c
-        twb = t_of_k / (Beta * DstartFnl);   
+        twb = t_of_k / DstartFnl / Beta;                              // NOTE: DstartFnl is defined as the inverse of the value in 2LPTic, hence divided here
 
         for(axes = 0; axes < 3; axes++) {
           cdisp[axes][coord][1] = kvec[axes] * twb * cpot[coord][0];
@@ -1415,8 +1417,8 @@ void displacement_fields(void) {
 
   if (ThisTask == 0) {
     printf("Calculated Zeldovich and 2LPT displacements...\n");
-    printf("Maximum ZA displacement = %lf kpc/h (%lf in units of the particle separation)...\n",max_disp_glob_ZA/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob_ZA / (Box / Nmesh));
-    printf("Maximum ZA+2LPT displacement = %lf kpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob / (Box / Nmesh));
+    printf("Maximum ZA displacement = %lf Mpc/h (%lf in units of the particle separation)...\n",max_disp_glob_ZA/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob_ZA / (Box / Nmesh));
+    printf("Maximum ZA+2LPT displacement = %lf Mpc/h (%lf in units of the particle separation)...\n\n",max_disp_glob/(InputSpectrum_UnitLength_in_cm/UnitLength_in_cm), max_disp_glob / (Box / Nmesh));
     fflush(stdout);
   }
 
