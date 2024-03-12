@@ -17,8 +17,8 @@ import matplotlib.ticker as tk
 # Plotting parameters
 # ===================
 mem_limit = 4.0       # The maximum amount of memory available per processor
-minproc = 1.0         # The smallest number of processors to consider
-maxproc = 256.0       # The largest number of processors to consider
+minproc = 1         # The smallest number of processors to consider
+maxproc = 256       # The largest number of processors to consider
 
 # Compilation options (0 = off, 1 = on)
 # =====================================
@@ -28,8 +28,8 @@ PARTICLE_ID = 0
 
 # The required run parameters
 # ===========================
-Nsample = 1024.0
-Nmesh = 1536.0
+Nsample = 1280.0
+Nmesh = 1280.0
 Buffer = 1.3
 
 # Perform the calculation
@@ -52,7 +52,7 @@ if (PARTICLE_ID):
 else:
     partfull = 12.0*part 
 
-nproc = np.linspace(minproc,maxproc,maxproc-minproc+1)
+nproc = np.linspace(minproc,maxproc,maxproc-minproc+1).astype(int)
 MEM = np.zeros(len(nproc))
 MEM_2LPT = np.zeros(len(nproc))
 MEM_DISP = np.zeros(len(nproc))

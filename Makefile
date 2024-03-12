@@ -9,7 +9,8 @@ EXEC = L-PICOLA
 #MACHINE = PLEIADES
 #MACHINE = PAWSEY
 #MACHINE = g2
-MACHINE = LAPTOP
+#MACHINE = LAPTOP
+MACHINE = NT
 
 # Options for optimization
 # ========================
@@ -23,8 +24,8 @@ OPTIMIZE  = -O3
 MEMORY_MODE = -DMEMORY_MODE             # Save memory by making sure to allocate and deallocate arrays only when we need them
 OPTIONS += $(MEMORY_MODE)               # and by making the particle data single precision
 
-#PARTICLE_ID = -DPARTICLE_ID             # Assigns unsigned long long ID's to each particle and outputs them. This adds
-#OPTIONS += $(PARTICLE_ID)               # an extra 8 bytes to the storage required for each particle
+PARTICLE_ID = -DPARTICLE_ID             # Assigns unsigned long long ID's to each particle and outputs them. This adds
+OPTIONS += $(PARTICLE_ID)               # an extra 8 bytes to the storage required for each particle
 
 #LIGHTCONE = -DLIGHTCONE                 # Builds a lightcone based on the run parameters and only outputs particles
 #OPTIONS += $(LIGHTCONE)                 # at a given timestep if they have entered the lightcone 
@@ -128,6 +129,16 @@ ifeq ($(MACHINE),LAPTOP)
   GSL_LIBS  = -L/usr/local/lib/ -lgsl -lgslcblas
   MPI_INCL  = -I/usr/local/include/openmpi/
   MPI_LIBS  = -L/usr/local/lib/openmpi/  -lmpi
+endif
+
+ifeq ($(MACHINE),NT)
+  CC = mpicc
+  FFTW_INCL = -I/apps/modules/software/FFTW.MPI/3.3.10-gompi-2023a/include/
+  FFTW_LIBS = -L/apps/modules/software/FFTW.MPI/3.3.10-gompi-2023a/lib -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/apps/modules/software/GSL/2.7-GCC-11.3.0/include/
+  GSL_LIBS  = -L/apps/modules/software/GSL/2.7-GCC-11.3.0/lib -lgsl -lgslcblas
+  MPI_INCL = -I/apps/modules/software/OpenMPI/4.1.4-GCC-11.3.0/include/
+  MPI_LIBS = -L/apps/modules/software/OpenMPI/4.1.4-GCC-11.3.0/lib -lmpi
 endif
 
 # =========================================================================================================================================================================================================

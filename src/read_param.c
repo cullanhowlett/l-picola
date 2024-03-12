@@ -287,6 +287,7 @@ void read_parameterfile(char * fname) {
   strcpy(tag[nt], "Nrep_pos_z");
   addr[nt] = &Nrep_pos_z;
   id[nt++] = INT;
+
 #endif
 
   if((fd = fopen(fname, "r"))) {
