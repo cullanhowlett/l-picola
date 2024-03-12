@@ -56,8 +56,8 @@ OPTIONS += $(GAUSSIAN)
                                          # For local, equilateral and orthogonal models you can use the provided files
                                          # input_kernel_local.txt, input_kernel_equil.txt, input_kernel_orthog.txt 
 
-#GADGET_STYLE = -DGADGET_STYLE           # If we are running snapshots this writes all the output in Gadget's '1' style format, with the corresponding header
-#OPTIONS += $(GADGET_STYLE)              # This option is incompatible with LIGHTCONE simulations. For binary outputs with LIGHTCONE simulations use the UNFORMATTED option.
+GADGET_STYLE = -DGADGET_STYLE           # If we are running snapshots this writes all the output in Gadget's '1' style format, with the corresponding header
+OPTIONS += $(GADGET_STYLE)              # This option is incompatible with LIGHTCONE simulations. For binary outputs with LIGHTCONE simulations use the UNFORMATTED option.
 																				
 #UNFORMATTED = -DUNFORMATTED             # If we are running lightcones this writes all the output in binary. All the particles are output in chunks with each 
 #OPTIONS += $(UNFORMATTED)               # chunk preceded by the number of particles in the chunk. With the chunks we output all the data (id, position and velocity)
