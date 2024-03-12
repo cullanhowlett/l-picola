@@ -10,6 +10,7 @@ EXEC = L-PICOLA
 #MACHINE = PAWSEY
 #MACHINE = g2
 #MACHINE = LAPTOP
+#MACHINE = OZSTAR
 MACHINE = NT
 
 # Options for optimization
@@ -129,6 +130,16 @@ ifeq ($(MACHINE),LAPTOP)
   GSL_LIBS  = -L/usr/local/lib/ -lgsl -lgslcblas
   MPI_INCL  = -I/usr/local/include/openmpi/
   MPI_LIBS  = -L/usr/local/lib/openmpi/  -lmpi
+endif
+
+ifeq ($(MACHINE),OZSTAR)
+  CC = mpicc
+  FFTW_INCL = -I/apps/skylake/software/mpi/gcc/7.3.0/openmpi/3.0.0/fftw/3.3.7/include/
+  FFTW_LIBS = -L/apps/skylake/software/mpi/gcc/7.3.0/openmpi/3.0.0/fftw/3.3.7/lib -lfftw3_mpi -lfftw3
+  GSL_INCL  = -I/apps/skylake/software/compiler/gcc/7.3.0/gsl/2.4/include/
+  GSL_LIBS  = -L/apps/skylake/software/compiler/gcc/7.3.0/gsl/2.4/lib/ -lgsl -lgslcblas
+  MPI_INCL = -I/apps/skylake/software/compiler/gcc/7.3.0/openmpi/3.0.0/include/
+  MPI_LIBS = -L/apps/skylake/software/compiler/gcc/7.3.0/openmpi/3.0.0/lib -lmpi
 endif
 
 ifeq ($(MACHINE),NT)
