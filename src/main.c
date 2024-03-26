@@ -820,7 +820,6 @@ void Output(double A, double Z, double Dv, double Dv2) {
 
         // write velocities
         my_fwrite(&dummy, sizeof(dummy), 1, fp);
-	printf("%12.6lf, %12.6lf, %12.6lf\n", sumx, sumy, sumz);
         for(n = 0, pc = 0; n < NumPart; n++) {
           block[3 * pc] = (float)(velfac*fac*(P[n].Vel[0]-sumx+(P[n].Dz[0]*Dv+P[n].D2[0]*Dv2)*UseCOLA));
           block[3 * pc + 1] = (float)(velfac*fac*(P[n].Vel[1]-sumy+(P[n].Dz[1]*Dv+P[n].D2[1]*Dv2)*UseCOLA));
